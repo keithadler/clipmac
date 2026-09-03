@@ -30,6 +30,12 @@ struct MenuBarContent: View {
         Button("Export Pins as Text Replacements…") { Snippets.exportWithDialog() }
         Divider()
         Button("Settings…") { NSApp.activate(); openSettings() }.keyboardShortcut(",")
+        Menu("Help") {
+            Button("Welcome Tour") { WelcomeController.shared.show() }
+            Button("Clip for Mac Help") { NSWorkspace.shared.open(URL(string: "https://github.com/keithadler/clipmac#readme")!) }
+            Button("Check for Updates…") { Updates.checkAndPresent() }
+            Button("About Clip for Mac") { Updates.showAbout() }
+        }
         Button("Quit Clip for Mac") { NSApp.terminate(nil) }.keyboardShortcut("q")
     }
 }

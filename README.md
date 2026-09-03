@@ -80,6 +80,25 @@ clipmac status
 
 Exit codes: 0 fine, 1 warning, 2 problem, 64 usage error. `man clipmac` after `--install`.
 
+## Shortcuts and scripts
+
+The `clipmac://` URL scheme drives the running app, so a Shortcuts "Open URL" action or
+`open` from a script works without the CLI:
+
+```
+clipmac://open                    show the panel
+clipmac://search?q=invoice        show the panel with a query
+clipmac://paste/42                paste item #42 (add ?plain=1 for plain text)
+clipmac://copy/42                 put item #42 on the clipboard
+clipmac://pause?minutes=30        clipmac://resume
+clipmac://settings                clipmac://welcome            clipmac://close
+```
+
+## Privacy
+
+See [PRIVACY.md](PRIVACY.md): what is stored, what is never stored, what leaves the Mac
+(nothing unless you add your own key), and the FileVault statement.
+
 ## Building
 
 Requires macOS 14 or later and the Command Line Tools (`xcode-select --install`). No Xcode, no
@@ -92,7 +111,8 @@ dependencies beyond the system frameworks.
 That builds a universal binary, wraps it in `Clip for Mac.app`, copies it to /Applications and
 symlinks `clipmac` onto your PATH. Run `./make-local-identity.sh` once so macOS stops re-asking
 for Accessibility after every rebuild. `./make-dmg.sh` makes the release disk image;
-`./notarize.sh` documents the Developer ID path.
+`./notarize.sh` documents the Developer ID path. `clipmac selftest` runs the built-in checks with nothing but the Command Line Tools;
+`swift test` runs the XCTest suite where Xcode is installed (CI does both). `Casks/clipmac.rb` is the Homebrew cask for the first public release.
 
 ## Layout
 

@@ -26,6 +26,7 @@ enum CLI {
       clipmac assist "<question>" [--local | --cloud] [--last N | --today] [--yes] [--json]
       clipmac assist log [--json]
       clipmac status [--json]
+      clipmac selftest [--json]         run the built-in checks (no Xcode needed)
       clipmac help | version
 
     ITEMS
@@ -210,6 +211,9 @@ enum CLI {
 
         case "assist":
             return assist(args, json: json)
+
+        case "selftest":
+            return SelfTest.run(json: json)
 
         default:
             fputs("unknown command: \(cmd)\n\n\(usage)\n", stderr)

@@ -13,6 +13,11 @@ let package = Package(
                 .linkedFramework("Carbon"),
                 .linkedFramework("NaturalLanguage"),
             ]
-        )
+        ),
+        .testTarget(
+            name: "ClipMacTests",
+            dependencies: ["ClipMac"],
+            path: "Tests/ClipMacTests"
+        ),
     ]
 )

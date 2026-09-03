@@ -25,7 +25,7 @@ final class PanelController {
         if panel == nil { build() }
         guard let panel else { return }
         model.reset()
-        position(panel)
+        if !hasSavedFrame { position(panel) }
         panel.makeKeyAndOrderFront(nil)
         installMonitor()
         model.focusToken += 1
@@ -48,11 +48,18 @@ final class PanelController {
         p.isReleasedWhenClosed = false
         p.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient]
         p.contentView = NSHostingView(rootView: PanelView(model: model))
+        p.setFrameAutosaveName("ClipPanel")
+        p.animationBehavior = .utilityWindow
         NotificationCenter.default.addObserver(forName: NSWindow.didResignKeyNotification, object: p, queue: .main) { [weak self] _ in
             Task { @MainActor in self?.hide() }
         }
+        NotificationCenter.default.addObserver(forName: NSWindow.didMoveNotification, object: p, queue: .main) { _ in
+            Prefs.defaults.set(true, forKey: "panelMoved")
+        }
         panel = p
     }
+
+    private var hasSavedFrame: Bool { Prefs.defaults.bool(forKey: "panelMoved") }
 
     private func position(_ p: NSPanel) {
         let mouse = NSEvent.mouseLocation
@@ -159,6 +166,15 @@ final class PanelModel: ObservableObject {
     func setKeyword(_ item: Item, _ keyword: String) {
         Store.shared.setKeyword(item.id, keyword)
         refresh(keeping: item.id)
+    }
+
+    func delete(_ item: Item) {
+        Store.shared.delete(item.id)
+        refresh()
+    }
+
+    func revealInFinder(_ item: Item) {
+        NSWorkspace.shared.activateFileViewerSelecting(item.filePaths.map { URL(fileURLWithPath: $0) })
     }
 
     func deleteSelected() {

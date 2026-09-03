@@ -37,6 +37,7 @@ struct PanelView: View {
                 .textFieldStyle(.plain)
                 .font(.title3)
                 .focused($searchFocused)
+                .accessibilityLabel(Text("Search your clipboard"))
             if !model.query.isEmpty {
                 Button { model.query = "" } label: { Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary) }
                     .buttonStyle(.plain)
@@ -75,6 +76,8 @@ struct PanelView: View {
             .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 14).padding(.top, 8).padding(.bottom, 2)
     }
 
+    @State private var hovered: Int64?
+
     private func row(_ it: Item, index: Int) -> some View {
         let selected = index == model.selected
         return HStack(spacing: 10) {
@@ -93,12 +96,36 @@ struct PanelView: View {
             if index < 9 { Text("⌘\(index + 1)").font(.caption.monospaced()).foregroundStyle(selected ? Color.white.opacity(0.8) : Color.secondary) }
         }
         .padding(.horizontal, 12).padding(.vertical, 6)
-        .background(selected ? Color.accentColor : Color.clear, in: RoundedRectangle(cornerRadius: 6))
+        .background(selected ? Color.accentColor : (hovered == it.id ? Color.primary.opacity(0.06) : Color.clear), in: RoundedRectangle(cornerRadius: 6))
         .padding(.horizontal, 6)
         .contentShape(Rectangle())
         .id(it.id)
+        .onHover { hovered = $0 ? it.id : (hovered == it.id ? nil : hovered) }
         .onTapGesture(count: 2) { PanelController.shared.hide(); model.paste(it, plain: false) }
         .onTapGesture { model.selected = index }
+        .contextMenu { contextMenu(it) }
+        .draggable(it.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("\(it.kind.label): \(it.kind == .image ? String(localized: "Image") : it.preview)"))
+        .accessibilityValue(Text("\(it.sourceName ?? "") \(Dump.relative(it.createdAt))\(it.pinned ? ", " + String(localized: "pinned") : "")\(it.looksSensitive ? ", " + String(localized: "looks like a secret") : "")"))
+        .accessibilityAddTraits(selected ? .isSelected : [])
+        .accessibilityHint(Text("Press Return to paste"))
+    }
+
+    @ViewBuilder
+    private func contextMenu(_ it: Item) -> some View {
+        Button("Paste") { PanelController.shared.hide(); model.paste(it, plain: false) }
+        Button("Paste as Plain Text") { PanelController.shared.hide(); model.paste(it, plain: true) }
+        Button("Copy") { model.copy(it); PanelController.shared.hide() }
+        Divider()
+        Button(it.pinned ? "Unpin" : "Pin") { Store.shared.setPinned(it.id, !it.pinned); model.refresh(keeping: it.id) }
+        if it.kind == .file { Button("Show in Finder") { model.revealInFinder(it) } }
+        if it.kind == .url, let u = URL(string: it.plain.trimmingCharacters(in: .whitespacesAndNewlines)) { Button("Open Link") { NSWorkspace.shared.open(u) } }
+        if let b = it.sourceBundleID {
+            Button(String(format: String(localized: "Forget everything from %@"), it.sourceName ?? b)) { _ = Store.shared.delete(bundleID: b); model.refresh() }
+        }
+        Divider()
+        Button("Delete", role: .destructive) { model.delete(it) }
     }
 
     private var footer: some View {
