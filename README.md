@@ -29,6 +29,10 @@ them all.
 - Pinned items sit at the top. Give a pin a keyword and `clipmac snip <keyword>` prints it; the
   menu bar can also export pins as a macOS Text Replacement list so the system expands them.
   Clip for Mac never watches what you type.
+- **⌥⇧⌘V** pastes whatever is on the clipboard as plain text, from any app, without opening
+  the panel. **⇧↩** in the panel queues an item on the paste stack; **⌃⌥⌘V** pastes the next
+  queued item, so you can collect five things and paste them into five fields in a row. All
+  three shortcuts are configurable in Settings › General.
 - **Pause** from the menu bar or `clipmac pause 30m`. The icon shows the state.
 - Search matches words (full-text), fragments (substring) and, with the default on-device
   embeddings, *meaning*: "that thing about the invoice" finds it without the word.

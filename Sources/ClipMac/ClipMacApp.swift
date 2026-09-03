@@ -43,8 +43,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
         Monitor.shared.start()
-        Hotkey.onPress = { PanelController.shared.toggle() }
-        Hotkey.register()
+        Hotkey.handlers[.panel] = { PanelController.shared.toggle() }
+        Hotkey.handlers[.plainPaste] = { Paster.pasteCurrentAsPlain() }
+        Hotkey.handlers[.pasteNext] = { PasteStack.shared.pasteNext() }
+        Hotkey.registerAll()
         DispatchQueue.global(qos: .utility).async {
             Store.shared.enforceRetention()
             Assist.shared.indexPending()
@@ -67,7 +69,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        Hotkey.unregister()
+        Hotkey.unregisterAll()
     }
 }
 

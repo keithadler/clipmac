@@ -99,3 +99,18 @@ enum Paster {
         up.post(tap: .cghidEventTap)
     }
 }
+
+extension Paster {
+    /// The current clipboard, stripped to its string, pasted (or just re-copied when there is no
+    /// Accessibility permission). Nothing happens for images and files.
+    @MainActor
+    static func pasteCurrentAsPlain() {
+        let pb = NSPasteboard.general
+        guard let s = pb.string(forType: .string), !s.isEmpty else { NSSound.beep(); return }
+        Monitor.shared.expectOwnChange()
+        pb.clearContents()
+        pb.setString(s, forType: .string)
+        guard Prefs.autoPaste, Capabilities.accessibilityTrusted else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(30)) { sendCommandV() }
+    }
+}

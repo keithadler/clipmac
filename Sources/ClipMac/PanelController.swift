@@ -38,7 +38,7 @@ final class PanelController {
 
     private func build() {
         let p = KeyPanel(contentRect: NSRect(x: 0, y: 0, width: 780, height: 470),
-                         styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
+                         styleMask: [.borderless, .nonactivatingPanel, .resizable], backing: .buffered, defer: false)
         p.level = .floating
         p.isOpaque = false
         p.backgroundColor = .clear
@@ -49,6 +49,7 @@ final class PanelController {
         p.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient]
         p.contentView = NSHostingView(rootView: PanelView(model: model))
         p.setFrameAutosaveName("ClipPanel")
+        p.minSize = NSSize(width: 640, height: 360)
         p.animationBehavior = .utilityWindow
         NotificationCenter.default.addObserver(forName: NSWindow.didResignKeyNotification, object: p, queue: .main) { [weak self] _ in
             Task { @MainActor in self?.hide() }
@@ -92,7 +93,9 @@ final class PanelController {
         case 116: model.move(-10); return true                        // page up
         case 121: model.move(10); return true                         // page down
         case 36, 76:                                                  // return / enter
-            if let it = model.selectedItem { hide(); model.paste(it, plain: cmd) }
+            guard let it = model.selectedItem else { return true }
+            if e.modifierFlags.contains(.shift) { model.queue(it) }         // ⇧↩ adds to the paste stack
+            else { hide(); model.paste(it, plain: cmd) }
             return true
         case 51 where cmd: model.deleteSelected(); return true        // ⌘⌫
         default: break
@@ -156,6 +159,8 @@ final class PanelModel: ObservableObject {
     func paste(_ item: Item, plain: Bool) { Paster.paste(item, plain: plain) }
 
     func copy(_ item: Item) { Paster.write(item, plain: false) }
+
+    func queue(_ item: Item) { PasteStack.shared.push(item) }
 
     func togglePin() {
         guard let it = selectedItem else { return }

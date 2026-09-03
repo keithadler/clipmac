@@ -5,6 +5,7 @@ import AppKit
 
 struct PanelView: View {
     @ObservedObject var model: PanelModel
+    @ObservedObject private var stack = PasteStack.shared
     @FocusState private var searchFocused: Bool
 
     var body: some View {
@@ -22,7 +23,7 @@ struct PanelView: View {
             Divider()
             footer
         }
-        .frame(width: 780, height: 470)
+        .frame(minWidth: 640, minHeight: 360)
         .background(.regularMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.primary.opacity(0.12)))
@@ -117,6 +118,7 @@ struct PanelView: View {
         Button("Paste") { PanelController.shared.hide(); model.paste(it, plain: false) }
         Button("Paste as Plain Text") { PanelController.shared.hide(); model.paste(it, plain: true) }
         Button("Copy") { model.copy(it); PanelController.shared.hide() }
+        Button("Add to Paste Stack") { model.queue(it) }
         Divider()
         Button(it.pinned ? "Unpin" : "Pin") { Store.shared.setPinned(it.id, !it.pinned); model.refresh(keeping: it.id) }
         if it.kind == .file { Button("Show in Finder") { model.revealInFinder(it) } }
@@ -130,8 +132,13 @@ struct PanelView: View {
 
     private var footer: some View {
         HStack(spacing: 14) {
-            hint("↩", "Paste"); hint("⌘↩", "Plain"); hint("⌘C", "Copy"); hint("⌘P", "Pin"); hint("⌘⌫", "Delete"); hint("esc", "Close")
+            hint("↩", "Paste"); hint("⌘↩", "Plain"); hint("⇧↩", "Queue"); hint("⌘C", "Copy"); hint("⌘P", "Pin"); hint("⌘⌫", "Delete"); hint("esc", "Close")
             Spacer()
+            if !stack.isEmpty {
+                Text(String(format: String(localized: "%lld queued · %@ pastes next"), stack.count, Hotkey.describe(.pasteNext)))
+                    .font(.caption).foregroundStyle(Color.accentColor)
+                Button { stack.clear() } label: { Image(systemName: "xmark.circle") }.buttonStyle(.plain).help("Clear the paste stack")
+            }
             if !Capabilities.accessibilityTrusted || !Prefs.autoPaste {
                 Text("Copy only: press ⌘V after choosing").font(.caption).foregroundStyle(.secondary)
             }

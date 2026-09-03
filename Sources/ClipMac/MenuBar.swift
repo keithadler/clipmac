@@ -5,9 +5,15 @@ import AppKit
 
 struct MenuBarContent: View {
     @ObservedObject private var monitor = Monitor.shared
+    @ObservedObject private var stack = PasteStack.shared
     var body: some View {
         Button { PanelController.shared.toggle() } label: { Text("Open Clipboard    \(Hotkey.describe())") }
         if Hotkey.conflict { Text("Shortcut taken by another app. Change it in Settings.") }
+        Button { Paster.pasteCurrentAsPlain() } label: { Text("Paste as Plain Text    \(Hotkey.describe(.plainPaste))") }
+        if !stack.isEmpty {
+            Button { stack.pasteNext() } label: { Text(String(format: String(localized: "Paste Next of %lld    %@"), stack.count, Hotkey.describe(.pasteNext))) }
+            Button("Clear Paste Stack") { stack.clear() }
+        }
         Divider()
         if monitor.paused {
             Button("Resume Capture") { monitor.resume() }

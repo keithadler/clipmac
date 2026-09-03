@@ -21,21 +21,19 @@ struct SettingsView: View {
 // MARK: - General
 
 struct GeneralTab: View {
-    @State private var hotkey = Hotkey.describe()
-    @State private var conflict = Hotkey.conflict
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
     @AppStorage("menuBarIcon", store: Prefs.defaults) private var menuBarIcon = true
+    @State private var plainOn = Hotkey.Kind.plainPaste.enabled
+    @State private var nextOn = Hotkey.Kind.pasteNext.enabled
 
     var body: some View {
         Form {
-            Section {
-                HStack {
-                    Text("Open the panel")
-                    Spacer()
-                    HotkeyRecorder(description: $hotkey, conflict: $conflict).frame(width: 160, height: 26)
-                }
-                if conflict { Text("Another app already uses this shortcut. Choose a different one.").font(.caption).foregroundStyle(.red) }
-                else { Text("Click the box, then press the keys you want. No Accessibility permission is needed for the shortcut.").font(.caption).foregroundStyle(.secondary) }
+            Section("Keyboard shortcuts") {
+                HotkeyRow(kind: .panel)
+                HotkeyRow(kind: .plainPaste, enabled: $plainOn)
+                HotkeyRow(kind: .pasteNext, enabled: $nextOn)
+                Text("Click a box, then press the keys you want; esc cancels. No Accessibility permission is needed for shortcuts. Paste-as-plain and paste-next press ⌘V for you only when Accessibility is granted; otherwise they put the text on the clipboard and you press ⌘V.")
+                    .font(.caption).foregroundStyle(.secondary)
             }
             Section {
                 Toggle("Open at login", isOn: $launchAtLogin).onChange(of: launchAtLogin) { _, on in
@@ -53,17 +51,45 @@ struct GeneralTab: View {
     }
 }
 
+/// One shortcut: label, optional on/off toggle, recorder box, conflict note.
+struct HotkeyRow: View {
+    let kind: Hotkey.Kind
+    var enabled: Binding<Bool>? = nil
+    @State private var description = ""
+    @State private var conflict = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack {
+                if let enabled {
+                    Toggle(kind.label, isOn: enabled).onChange(of: enabled.wrappedValue) { _, on in
+                        Hotkey.setEnabled(kind, on); conflict = Hotkey.conflicts.contains(kind)
+                    }
+                } else {
+                    Text(kind.label)
+                }
+                Spacer()
+                HotkeyRecorder(kind: kind, description: $description, conflict: $conflict)
+                    .frame(width: 150, height: 26)
+                    .disabled(enabled?.wrappedValue == false)
+                    .opacity(enabled?.wrappedValue == false ? 0.5 : 1)
+            }
+            if conflict { Text("Another app already uses this shortcut. Choose a different one.").font(.caption).foregroundStyle(.red) }
+        }
+        .onAppear { description = Hotkey.describe(kind); conflict = Hotkey.conflicts.contains(kind) }
+    }
+}
+
 /// A box that records the next key combination pressed while it has focus.
 struct HotkeyRecorder: NSViewRepresentable {
+    let kind: Hotkey.Kind
     @Binding var description: String
     @Binding var conflict: Bool
 
     func makeNSView(context: Context) -> RecorderView {
         let v = RecorderView()
         v.onRecord = { code, mods in
-            Prefs.defaults.set(code, forKey: "hotkeyCode")
-            Prefs.defaults.set(mods, forKey: "hotkeyModifiers")
-            let ok = Hotkey.register(keyCode: code, modifiers: mods)
+            let ok = Hotkey.set(kind, keyCode: code, modifiers: mods)
             description = Hotkey.describe(keyCode: code, modifiers: mods)
             conflict = !ok
         }

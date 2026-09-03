@@ -158,3 +158,15 @@
 "Allow sending selected items to a cloud model" = "Permitir enviar elementos seleccionados a un modelo en la nube";
 "Paste your API key" = "Pega tu clave de API";
 "A key is stored in your Keychain" = "Hay una clave guardada en tu llavero";
+"Keyboard shortcuts" = "Atajos de teclado";
+"Paste clipboard as plain text" = "Pegar el portapapeles sin formato";
+"Paste next item from the stack" = "Pegar el siguiente elemento de la pila";
+"Click a box, then press the keys you want; esc cancels. No Accessibility permission is needed for shortcuts. Paste-as-plain and paste-next press ⌘V for you only when Accessibility is granted; otherwise they put the text on the clipboard and you press ⌘V." = "Haz clic en una casilla y pulsa las teclas que quieras; esc cancela. Los atajos no necesitan el permiso de Accesibilidad. Pegar sin formato y pegar siguiente pulsan ⌘V por ti solo si Accesibilidad está concedida; si no, dejan el texto en el portapapeles y tú pulsas ⌘V.";
+"Another app already uses this shortcut. Choose a different one." = "Otra app ya usa este atajo. Elige otro.";
+"Queue" = "Encolar";
+"%lld queued · %@ pastes next" = "%lld en cola · %@ pega el siguiente";
+"Clear the paste stack" = "Vaciar la pila de pegado";
+"Add to Paste Stack" = "Añadir a la pila de pegado";
+"Paste as Plain Text    %@" = "Pegar sin formato    %@";
+"Paste Next of %lld    %@" = "Pegar siguiente de %lld    %@";
+"Clear Paste Stack" = "Vaciar pila de pegado";

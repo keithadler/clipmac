@@ -8,8 +8,11 @@ First version. Private, pre-release.
   excluded apps (pre-filled with password managers), size cap.
 - SQLite + FTS5 history with 30 day / 2,000 item / 1 GB retention; pinned items exempt;
   real deletion; session-only mode.
-- Non-activating floating panel: ⌥⌘V, live search, ↑↓, ↩ paste, ⌘↩ plain, ⌘C copy, ⌘1–9,
-  ⌘P pin, ⌘⌫ delete, esc; preview pane that never renders HTML; context menu; drag out.
+- Non-activating floating panel: ⌥⌘V, live search, ↑↓, ↩ paste, ⌘↩ plain, ⇧↩ queue, ⌘C copy,
+  ⌘1–9, ⌘P pin, ⌘⌫ delete, esc; resizable; preview pane that never renders HTML; context
+  menu; drag out.
+- Global paste-as-plain-text (⌥⇧⌘V) and paste stack with paste-next (⌃⌥⌘V); all shortcuts
+  configurable with conflict detection.
 - Copy-only and auto-paste (Accessibility) with previous-clipboard restore.
 - Pins with keywords, `clipmac snip`, Text Replacement export.
 - Redactor: API keys, JWTs, private keys, Luhn-valid card numbers, credentials, long base64.
