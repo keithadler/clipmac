@@ -354,6 +354,7 @@ final class Store {
     func wipe() {
         run("DELETE FROM vectors"); run("DELETE FROM items"); run("DELETE FROM assist_log")
         deleteOrphanBlobs()
+        if self === Store.shared { Assist.shared.invalidateCache() }
         exec("PRAGMA incremental_vacuum")
         exec("PRAGMA wal_checkpoint(TRUNCATE)")
     }

@@ -40,7 +40,7 @@ update check unless you click "Check for Updates…" (one request to GitHub with
 
 The optional "ask your clipboard" feature has three levels:
 
-1. Search by meaning uses Apple's on-device sentence embeddings. No network.
+1. Search by meaning uses Apple's on-device word embeddings. No network.
 2. Apple's on-device model (macOS 26 with Apple Intelligence). No network.
 3. Bring your own key (Anthropic or OpenAI). Off by default. You choose the items, the app runs
    the redactor over them (API keys, JWTs, private keys, card numbers, credentials, long base64

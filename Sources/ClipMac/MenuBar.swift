@@ -146,7 +146,7 @@ struct AssistView: View {
 @MainActor
 final class AssistWindowController {
     static let shared = AssistWindowController()
-    private var window: NSWindow?
+    private(set) var window: NSWindow?
 
     func show() {
         if window == nil {

@@ -6,6 +6,9 @@ leaving your Mac.
 
 Free, MIT licensed, no account, no telemetry. Same family as [Tidy for Mac](https://github.com/keithadler/tidymac).
 
+<p align="center"><img src="docs/screenshots/panel.png" width="780" alt="The Clip for Mac panel: pinned snippet, history with ⌘-number badges, a flagged secret, preview pane"></p>
+<p align="center"><img src="docs/screenshots/panel-search.png" width="780" alt="Searching for money owed finds the invoice and the bill by meaning"><br><sub>"money owed" finds the invoice and the bill without either word, on-device.</sub></p>
+
 ## What it will never capture
 
 These are hard rules, not settings:
@@ -35,7 +38,9 @@ them all.
   three shortcuts are configurable in Settings › General.
 - **Pause** from the menu bar or `clipmac pause 30m`. The icon shows the state.
 - Search matches words (full-text), fragments (substring) and, with the default on-device
-  embeddings, *meaning*: "that thing about the invoice" finds it without the word.
+  word embeddings, *meaning*: "unpaid bill" finds the invoice without the word.
+
+<p align="center"><img src="docs/screenshots/welcome.png" width="420" alt="Welcome tour"> <img src="docs/screenshots/settings.png" width="420" alt="Settings › General with the three shortcuts"></p>
 
 ### Pasting: two honest modes
 
@@ -131,6 +136,8 @@ Three layers, one source of truth:
 
 - **XCTest bridge** (`Tests/ClipMacTests`) runs the same suites under `swift test` on any Mac
   with Xcode, which is what CI uses.
+- **Screenshots**: `clipmac screenshots docs/screenshots` renders every window with demo data, dark
+  and light, without touching real history. That is where the images above come from.
 - **Integration** (`tests/integration.sh`) launches the real app with its own data directory
   (`CLIPMAC_HOME`), copies text, links, secrets, concealed items, RTF, images and files, and
   checks what the CLI reports: capture, refusal, dedup, pause, search, pins, forget, wipe.

@@ -33,6 +33,7 @@ enum Dump {
     }
 
     static func relative(_ d: Date) -> String {
+        if abs(d.timeIntervalSinceNow) < 60 { return String(localized: "just now") }
         let f = RelativeDateTimeFormatter(); f.unitsStyle = .abbreviated
         return f.localizedString(for: d, relativeTo: Date())
     }

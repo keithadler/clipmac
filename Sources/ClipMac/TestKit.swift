@@ -83,7 +83,9 @@ enum TestKit {
         let defaults = UserDefaults(suiteName: suiteName)!
         Store.shared = Store(inMemory: true)
         Prefs.defaults = defaults
+        Assist.shared.invalidateCache()
         body()
+        Assist.shared.invalidateCache()
         Store.shared = savedStore
         Prefs.defaults = savedDefaults
         defaults.removePersistentDomain(forName: suiteName)

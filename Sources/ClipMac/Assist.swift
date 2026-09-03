@@ -22,23 +22,34 @@ final class Assist {
     var keyProvider: (Provider) -> String? = { Assist.apiKey(for: $0) }
 
     // MARK: - Tier 1: semantic search
+    //
+    // Averaged word embeddings, not the sentence model: measured on real clipboard text the sentence
+    // model scored "invoice" lower against an invoice than against an email signature and gave a
+    // nonsense word 0.42 against a recipe, while the word average put the right item first on every
+    // query by a wide margin and returns nothing at all for words it doesn't know.
 
-    private let embedding: NLEmbedding? = NLEmbedding.sentenceEmbedding(for: Capabilities.embeddingLanguage)
-    let modelTag = "nl-sentence-" + Capabilities.embeddingLanguage.rawValue
+    private let embedding: NLEmbedding? = NLEmbedding.wordEmbedding(for: Capabilities.embeddingLanguage)
+    let modelTag = "nl-word-" + Capabilities.embeddingLanguage.rawValue
     private let indexQueue = DispatchQueue(label: "com.keithadler.clipmac.index", qos: .utility)
     private var indexScheduled = false
     private var cache: [(Int64, [Float])] = []
     private var cacheLoaded = false
     private let cacheLock = NSLock()
 
+    /// Unit-length average of the known words in the text (first 400 words). nil when no word is known.
     func vector(for text: String) -> [Float]? {
         guard let embedding else { return nil }
-        let clipped = String(text.prefix(2000))
-        guard let v = embedding.vector(for: clipped) else { return nil }
-        var f = v.map { Float($0) }
-        let norm = sqrt(f.reduce(0) { $0 + $1 * $1 })
-        if norm > 0 { f = f.map { $0 / norm } }
-        return f
+        let words = text.lowercased().split { !$0.isLetter && !$0.isNumber }.prefix(400).map(String.init).filter { $0.count > 1 }
+        var acc = [Float](repeating: 0, count: embedding.dimension)
+        var n = 0
+        for w in words {
+            guard let v = embedding.vector(for: w) else { continue }
+            for i in 0..<min(v.count, acc.count) { acc[i] += Float(v[i]) }
+            n += 1
+        }
+        guard n > 0 else { return nil }
+        let norm = sqrt(acc.reduce(0) { $0 + $1 * $1 })
+        return norm > 0 ? acc.map { $0 / norm } : nil
     }
 
     /// Embeds items that don't have a vector yet. Cheap; runs shortly after every capture.
@@ -64,6 +75,10 @@ final class Assist {
         if !missing.isEmpty { cacheLock.lock(); cacheLoaded = false; cacheLock.unlock() }
     }
 
+    /// Drops the in-memory vector cache; the next search reloads from the store. Called after wipe and
+    /// by the test kit when it swaps stores.
+    func invalidateCache() { cacheLock.lock(); cacheLoaded = false; cache = []; cacheLock.unlock() }
+
     private func vectors() -> [(Int64, [Float])] {
         cacheLock.lock(); defer { cacheLock.unlock() }
         if !cacheLoaded { cache = Store.shared.allVectors(model: modelTag); cacheLoaded = true }
@@ -72,9 +87,9 @@ final class Assist {
 
     /// Items whose meaning is close to the query. Brute-force cosine over the whole history is a few
     /// milliseconds for the default 2,000-item cap.
-    func semanticSearch(_ query: String, limit: Int = 6, floor: Float = 0.33, margin: Float = 0.10) -> [(Item, Float)] {
-        // Apple's sentence embeddings score related text around 0.4-0.5 and unrelated text under 0.3, so
-        // use a low floor and keep only results close to the best one.
+    func semanticSearch(_ query: String, limit: Int = 6, floor: Float = 0.45, margin: Float = 0.10) -> [(Item, Float)] {
+        // Related text scores 0.55-0.70 with the word average, unrelated text under 0.40; keep results
+        // above the floor and close to the best one.
         guard Prefs.semanticSearch, let q = vector(for: query) else { return [] }
         var scored: [(Int64, Float)] = []
         for (id, v) in vectors() where v.count == q.count {

@@ -18,6 +18,7 @@ final class PanelController {
     private var keyMonitor: Any?
 
     var isVisible: Bool { panel?.isVisible ?? false }
+    var window: NSWindow? { panel }
 
     func toggle() { isVisible ? hide() : show() }
 

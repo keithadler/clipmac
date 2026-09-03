@@ -83,12 +83,15 @@ enum Help {
     static let readme = URL(string: "https://github.com/keithadler/clipmac#readme")!
     static let issues = URL(string: "https://github.com/keithadler/clipmac/issues")!
 
+    /// "Help.es.html" for Spanish speakers, "Help.html" otherwise.
+    static var pageName: String { (Locale.preferredLanguages.first ?? "en").hasPrefix("es") ? "Help.es" : "Help" }
+
     static var bundledPage: URL? {
-        if let url = Bundle.main.url(forResource: "Help", withExtension: "html") { return url }
+        if let url = Bundle.main.url(forResource: pageName, withExtension: "html") { return url }
         // Launched through the clipmac symlink: find the enclosing .app the way Capabilities.appVersion does.
         var url = (Bundle.main.executableURL ?? URL(fileURLWithPath: CommandLine.arguments[0])).resolvingSymlinksInPath()
         while url.path != "/" {
-            if url.pathExtension == "app", let u = Bundle(url: url)?.url(forResource: "Help", withExtension: "html") { return u }
+            if url.pathExtension == "app", let u = Bundle(url: url)?.url(forResource: pageName, withExtension: "html") { return u }
             url = url.deletingLastPathComponent()
         }
         return nil

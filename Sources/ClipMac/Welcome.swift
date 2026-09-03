@@ -8,7 +8,7 @@ import ServiceManagement
 @MainActor
 final class WelcomeController {
     static let shared = WelcomeController()
-    private var window: NSWindow?
+    private(set) var window: NSWindow?
 
     static var shouldShow: Bool { !Prefs.defaults.bool(forKey: "welcomed") }
 

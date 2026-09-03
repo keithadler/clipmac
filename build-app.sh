@@ -46,6 +46,7 @@ if [ -f AppIcon.icns ]; then
 fi
 # Help page and privacy statement travel inside the bundle so Help works offline and before the repo is public.
 cp docs/Help.html "$APP/Contents/Resources/Help.html"
+cp docs/Help.es.html "$APP/Contents/Resources/Help.es.html"
 cp PRIVACY.md "$APP/Contents/Resources/PRIVACY.md"
 # Translations: Bundle.main finds these at runtime.
 for lproj in Localization/*.lproj; do

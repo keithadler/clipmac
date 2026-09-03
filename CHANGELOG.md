@@ -20,4 +20,8 @@ First version. Private, pre-release.
   with visible redacted payload, per-request confirmation, and a request log.
 - `clipmac` CLI with `--json` everywhere; `clipmac://` URL scheme for Shortcuts and scripts.
 - First-launch welcome, About, Check for Updates, Help menu, login item.
+- Bundled help (English and Spanish) with a keyboard reference; `clipmac screenshots` renders every
+  window with demo data in dark and light for the README.
+- Search by meaning uses averaged word embeddings (measured far better than the sentence model on
+  clipboard text); card-number detection is group-aware.
 - English and Spanish. Universal binary, macOS 14+.

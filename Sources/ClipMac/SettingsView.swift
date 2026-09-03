@@ -297,7 +297,7 @@ struct AssistTab: View {
     var body: some View {
         Form {
             Section("On this Mac") {
-                Toggle("Search by meaning (on-device embeddings, no network)", isOn: $semantic).disabled(!Capabilities.sentenceEmbeddingAvailable)
+                Toggle("Search by meaning (on-device word embeddings, no network)", isOn: $semantic).disabled(!Capabilities.sentenceEmbeddingAvailable)
                     .onChange(of: semantic) { _, on in if on { Assist.shared.indexSoon() } }
                 Toggle("Ask Apple's on-device model", isOn: $onDevice).disabled(!Capabilities.onDeviceModelAvailable)
                 Text(Capabilities.onDeviceModelNote).font(.caption).foregroundStyle(.secondary)

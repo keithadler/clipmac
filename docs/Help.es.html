@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ayuda de Clip for Mac</title>
+<style>
+  :root { color-scheme: light dark; --fg: #1d1d1f; --muted: #6e6e73; --bg: #fff; --card: #f5f5f7; --accent: #2f63d6; --line: #e5e5ea; }
+  @media (prefers-color-scheme: dark) { :root { --fg: #f5f5f7; --muted: #a1a1a6; --bg: #1c1c1e; --card: #2c2c2e; --accent: #6ea0ff; --line: #3a3a3c; } }
+  body { margin: 0; font: 15px/1.55 -apple-system, "SF Pro Text", Helvetica, Arial, sans-serif; color: var(--fg); background: var(--bg); }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 30px; margin: 0 0 4px; } h1 small { display: block; font-size: 15px; font-weight: 400; color: var(--muted); }
+  h2 { font-size: 20px; margin: 36px 0 10px; padding-top: 12px; border-top: 1px solid var(--line); }
+  h3 { font-size: 16px; margin: 20px 0 6px; }
+  p, li { color: var(--fg); } .muted { color: var(--muted); }
+  kbd { display: inline-block; min-width: 1.4em; padding: 1px 6px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; background: var(--card); font: 13px ui-monospace, "SF Mono", Menlo, monospace; text-align: center; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 16px; } td, th { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; } th { color: var(--muted); font-weight: 600; font-size: 13px; }
+  code, pre { font: 13px ui-monospace, "SF Mono", Menlo, monospace; } pre { background: var(--card); padding: 12px 14px; border-radius: 8px; overflow-x: auto; }
+  .card { background: var(--card); border-radius: 10px; padding: 14px 16px; margin: 12px 0; }
+  nav a { margin-right: 14px; color: var(--accent); text-decoration: none; } a { color: var(--accent); }
+  .rules li { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<main>
+<h1>Clip for Mac <small>Historial del portapapeles que se niega a capturar secretos</small></h1>
+<nav><a href="#start">Primeros pasos</a><a href="#keys">Teclado</a><a href="#paste">Pegar</a><a href="#secrets">Secretos</a><a href="#pins">Fijados</a><a href="#ask">Preguntar</a><a href="#cli">Terminal</a><a href="#privacy">Privacidad</a><a href="#trouble">Problemas</a></nav>
+
+<h2 id="start">Primeros pasos</h2>
+<p>Clip for Mac vive en la barra de menús. Todo lo que copias se conserva 30 días (ajustable), se puede buscar y está a una tecla de distancia. Pulsa <kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd> en cualquier app para abrir el panel sobre lo que estés haciendo. Escribe para buscar, pulsa <kbd>↩</kbd> para pegar y <kbd>esc</kbd> para cerrar.</p>
+<div class="card">El panel nunca le quita el foco a la app que estabas usando, así que el elemento va exactamente donde estaba tu cursor.</div>
+
+<h2 id="keys">Teclado</h2>
+<h3>En cualquier sitio</h3>
+<table>
+<tr><td><kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd></td><td>Abrir o cerrar el panel</td></tr>
+<tr><td><kbd>⌥</kbd><kbd>⇧</kbd><kbd>⌘</kbd><kbd>V</kbd></td><td>Pegar lo que haya en el portapapeles como texto sin formato, sin abrir el panel</td></tr>
+<tr><td><kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd></td><td>Pegar el siguiente elemento de la pila de pegado</td></tr>
+</table>
+<p class="muted">Los tres se pueden cambiar o desactivar en Ajustes › General. La app te avisa si otra app ya usa un atajo.</p>
+<h3>En el panel</h3>
+<table>
+<tr><td>Escribir</td><td>Buscar. Funcionan palabras, fragmentos y significado («aquello de la factura»).</td></tr>
+<tr><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>Mover la selección</td></tr>
+<tr><td><kbd>↩</kbd></td><td>Pegar el elemento seleccionado</td></tr>
+<tr><td><kbd>⌘</kbd><kbd>↩</kbd></td><td>Pegar sin formato</td></tr>
+<tr><td><kbd>⇧</kbd><kbd>↩</kbd></td><td>Añadir a la pila de pegado (ver más abajo)</td></tr>
+<tr><td><kbd>⌘</kbd><kbd>1</kbd>…<kbd>9</kbd></td><td>Pegar directamente uno de los nueve primeros</td></tr>
+<tr><td><kbd>⌘</kbd><kbd>C</kbd></td><td>Copiar al portapapeles sin pegar</td></tr>
+<tr><td><kbd>⌘</kbd><kbd>P</kbd></td><td>Fijar o desfijar</td></tr>
+<tr><td><kbd>⌘</kbd><kbd>⌫</kbd></td><td>Borrar el elemento (se borra de verdad, sin deshacer)</td></tr>
+<tr><td><kbd>esc</kbd></td><td>Cerrar</td></tr>
+</table>
+<p>Haz clic derecho en cualquier elemento para las mismas acciones más <em>Abrir enlace</em>, <em>Mostrar en el Finder</em> para archivos y <em>Olvidar todo lo de esta app</em>. También puedes arrastrar un elemento del panel a otra app.</p>
+
+<h2 id="paste">Pegar: dos modos</h2>
+<p><strong>Pega por ti.</strong> Con el permiso de Accesibilidad concedido, elegir un elemento lo pega en la app que estabas usando. Ese permiso es la forma en que macOS deja que una app pulse <kbd>⌘</kbd><kbd>V</kbd> por ti; Clip for Mac no lo usa para nada más. Concédelo en Ajustes › Pegar. Después se restaura tu portapapeles anterior (retardo ajustable, o desactivado).</p>
+<p><strong>Solo copia.</strong> Sin ese permiso, elegir un elemento lo copia y cierra el panel; tú pulsas <kbd>⌘</kbd><kbd>V</kbd>. Todo lo demás funciona igual. El pie del panel indica en qué modo estás.</p>
+<h3>La pila de pegado</h3>
+<p>Pulsa <kbd>⇧</kbd><kbd>↩</kbd> sobre varios elementos para encolarlos y luego pulsa <kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd> en un formulario para pegarlos uno tras otro, el más antiguo primero. La barra de menús muestra cuántos hay en cola. La pila se vacía al salir de la app.</p>
+
+<h2 id="secrets">Lo que nunca se captura</h2>
+<ul class="rules">
+<li>Todo lo que un gestor de contraseñas marque como <em>oculto</em> o <em>transitorio</em> (lo hacen 1Password, Bitwarden, Acceso a Llaveros, Strongbox, KeePassXC y otros).</li>
+<li>Todo lo copiado mientras un <em>campo de contraseña</em> tiene el foco. El icono de la barra de menús muestra un candado mientras es así.</li>
+<li>Todo lo copiado desde una app de la <em>lista de exclusión</em> (Ajustes › Captura). Viene rellena con los gestores de contraseñas habituales; añade la app que quieras.</li>
+<li>Todo lo que supere el tamaño máximo (50 MB por defecto).</li>
+</ul>
+<p>No son ajustes. No hay ningún interruptor que los desactive.</p>
+<p>Los elementos que aun así parecen secretos (claves de API, tokens, claves privadas, números de tarjeta, <code>password=…</code>) se marcan con un escudo en el panel. Se quedan en tu Mac y se enmascaran antes de cualquier petición opcional a la nube. <code>clipmac forget --sensitive</code> los borra todos de una vez.</p>
+<h3>Pausa</h3>
+<p>Pausa la captura desde la barra de menús durante 10 minutos, 1 hora o hasta que la reanudes. El icono cambia mientras está en pausa. Copiar sigue funcionando; simplemente no se registra.</p>
+
+<h2 id="pins">Fijados y fragmentos</h2>
+<p>Los elementos fijados están arriba del panel y nunca caducan. Dale una palabra clave a un fijado en el panel de vista previa y se convierte en un fragmento: <code>clipmac snip &lt;palabra&gt;</code> lo imprime, y desde la barra de menús puedes exportar todos los fijados con palabra clave como lista de sustituciones de texto de macOS. Arrastra ese archivo a Ajustes del Sistema › Teclado › Sustituciones de texto y macOS los expandirá al escribir. Clip for Mac nunca observa lo que tecleas.</p>
+
+<h2 id="ask">Pregunta a tu portapapeles</h2>
+<p>Desactivado salvo que lo actives en Ajustes › Asistente. Tres niveles, cada uno más estricto sobre lo que sale del Mac:</p>
+<table>
+<tr><th>Nivel</th><th>Qué</th><th>¿Sale del Mac?</th></tr>
+<tr><td>Buscar por significado</td><td>Embeddings de palabras locales. Activado por defecto; sección «Significado parecido» en el panel.</td><td>No</td></tr>
+<tr><td>Modelo local de Apple</td><td>macOS 26 con Apple Intelligence. «Resume lo que copié hoy», «convierte los últimos cinco elementos en una lista».</td><td>No</td></tr>
+<tr><td>Tu propia clave de API</td><td>Anthropic u OpenAI. Eliges los elementos, ves el contenido exacto enmascarado y confirmas cada petición. Cada petición queda registrada.</td><td>Solo lo que confirmes</td></tr>
+</table>
+<p class="muted">La clave se guarda en tu llavero de inicio de sesión. El proveedor cobra su API por uso, aparte de una suscripción a Claude Pro o ChatGPT Plus. Sin proxy, sin cuenta, sin pasar por el servidor de nadie.</p>
+
+<h2 id="cli">Terminal</h2>
+<p><code>clipmac</code> es la misma app, en tu PATH tras <code>./build-app.sh --install</code>. Todos los comandos aceptan <code>--json</code>. Los elementos son una posición (1 = el más reciente) o un identificador estable escrito como <code>#42</code>.</p>
+<pre>clipmac list --limit 20            clipmac search "factura" --semantic
+clipmac get 3                      clipmac copy #42 --plain
+clipmac pin 3 --keyword firma      clipmac snip firma
+clipmac pause 30m                  clipmac resume
+clipmac forget #42 | --app com.example.thing | --sensitive
+clipmac wipe --yes                 clipmac status
+clipmac assist "en qué trabajé hoy" --local
+clipmac assist log                 clipmac selftest</pre>
+<p>Los scripts y Atajos también pueden controlar la app con URLs: <code>clipmac://open</code>, <code>clipmac://search?q=factura</code>, <code>clipmac://paste/42</code>, <code>clipmac://copy/42?plain=1</code>, <code>clipmac://pause?minutes=30</code>, <code>clipmac://resume</code>, <code>clipmac://settings</code>. Consulta <code>man clipmac</code>.</p>
+
+<h2 id="privacy">Privacidad y almacenamiento</h2>
+<p>El historial está en <code>~/Library/Application Support/Clip for Mac/history.db</code>, con las imágenes y el texto enriquecido en una carpeta <code>blobs</code> al lado. Por defecto: 30 días, 2.000 elementos, 1 GB; los fijados están exentos; borrar es borrar de verdad. «Solo la sesión» en Ajustes › Historial lo mantiene todo en memoria.</p>
+<p><strong>Clip for Mac no cifra la base de datos por sí mismo.</strong> La búsqueda no puede indexar texto cifrado, y un cifrado a medias prometería más de lo que da. Se apoya en FileVault y te avisa cuando FileVault está desactivado. Sin cuenta, sin telemetría, sin red salvo que añadas tu propia clave o pulses «Buscar actualizaciones».</p>
+
+<h2 id="trouble">Solución de problemas</h2>
+<h3>El panel no se abre</h3>
+<p>Seguramente otra app usa <kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd>. La barra de menús lo indica; elige otro atajo en Ajustes › General. Siempre puedes abrir el panel desde la barra de menús.</p>
+<h3>Elegir un elemento no lo pega</h3>
+<p>Accesibilidad no está concedida, así que estás en modo solo copia: pulsa <kbd>⌘</kbd><kbd>V</kbd>. Para concederla: Ajustes › Pegar › Conceder Accesibilidad. Tras recompilar desde el código hay que concederla de nuevo, salvo que hayas ejecutado <code>./make-local-identity.sh</code>.</p>
+<h3>Se pegó otra cosa</h3>
+<p>Una app lenta leyó el portapapeles después de que Clip for Mac ya hubiera restaurado el anterior. Sube el retardo en Ajustes › Pegar, o desactiva la restauración.</p>
+<h3>Algo que copié no está en el historial</h3>
+<p>Mira la barra de menús: en pausa, o un campo de contraseña tenía el foco. Ajustes › Captura muestra por qué se omitió el último elemento. Lo copiado desde apps excluidas nunca se registra.</p>
+<h3>Empezar de cero</h3>
+<p>Ajustes › Historial › Olvidar todo, o <code>clipmac wipe --yes</code>. Para quitar la app del todo, bórrala de Aplicaciones junto con la carpeta anterior; elimina la clave de API de Acceso a Llaveros si añadiste una.</p>
+
+<p class="muted" style="margin-top:40px">Clip for Mac es software libre con licencia MIT. Código e incidencias: <a href="https://github.com/keithadler/clipmac">github.com/keithadler/clipmac</a></p>
+</main>
+</body>
+</html>

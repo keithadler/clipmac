@@ -28,6 +28,7 @@ enum CLI {
       clipmac assist log [--json]
       clipmac status [--json]
       clipmac selftest [--filter S] [--list] [--json]   run the built-in test suites (no Xcode needed)
+      clipmac screenshots <dir>         render every window with demo data (dark and light) for the README
       clipmac help | version
 
     ITEMS
@@ -224,6 +225,14 @@ enum CLI {
 
         case "assist":
             return assist(args, json: json)
+
+        case "screenshots":
+            guard let dir = pos.first else { fputs("screenshots needs a directory\n", stderr); return 64 }
+            do {
+                let files = try MainActor.assumeIsolated { try Screenshots.render(to: URL(fileURLWithPath: dir)) }
+                print(json ? Dump.json(["written": files.map(\.path)]) : files.map { "wrote \($0.path)" }.joined(separator: "\n"))
+                return 0
+            } catch { fputs("\(error.localizedDescription)\n", stderr); return 2 }
 
         case "selftest":
             if flag("--list", args) { TestKit.list(); return 0 }

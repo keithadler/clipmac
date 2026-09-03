@@ -42,12 +42,12 @@ enum Capabilities {
         return nil
     }
 
-    /// Tier 1: on-device sentence embeddings ship with macOS for a handful of languages.
+    /// Tier 1: on-device word embeddings ship with macOS for a handful of languages.
     static var embeddingLanguage: NLLanguage {
         let code = Locale.preferredLanguages.first?.prefix(2) ?? "en"
         return code == "es" ? .spanish : .english
     }
-    static var sentenceEmbeddingAvailable: Bool { NLEmbedding.sentenceEmbedding(for: embeddingLanguage) != nil }
+    static var sentenceEmbeddingAvailable: Bool { NLEmbedding.wordEmbedding(for: embeddingLanguage) != nil }
 
     /// Tier 2: Apple's on-device model. macOS 26+, Apple Intelligence enabled, supported hardware.
     static var onDeviceModelAvailable: Bool {
