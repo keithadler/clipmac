@@ -36,7 +36,7 @@ struct WelcomeView: View {
     let done: () -> Void
     @State private var trusted = Capabilities.accessibilityTrusted
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
-    @AppStorage("autoUpdateCheck", store: Prefs.defaults) private var autoUpdate = false
+    @AppStorage("autoUpdateCheck", store: Prefs.defaults) private var autoUpdate = true
     private let tick = Timer.publish(every: 1.5, on: .main, in: .common).autoconnect()
 
     var body: some View {

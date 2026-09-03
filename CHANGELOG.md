@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1 — 2026-09-02
+
+- Opens at login by default (registered once on first run) and checks for a new version once a day
+  by default. Both are toggles in Settings › General; nothing is ever installed by itself.
+
 ## 1.0.0 — 2026-09-02
 
 First release.

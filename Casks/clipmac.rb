@@ -1,8 +1,8 @@
 # Homebrew cask for Clip for Mac. Submit to homebrew/cask after the first public release,
 # or install from this file: brew install --cask ./Casks/clipmac.rb
 cask "clipmac" do
-  version "1.0.0"
-  sha256 "d08ca6d9afa320310a84096e3e67624e54eceb60a34b0721f09d0aeb357e30fb"
+  version "1.0.1"
+  sha256 "2ffb68fb581950192f49b9c2abca744fe38e105df8128175e62d6daca6673a37"
 
   url "https://github.com/keithadler/clipmac/releases/download/v#{version}/Clip-for-Mac-#{version}.dmg"
   name "Clip for Mac"

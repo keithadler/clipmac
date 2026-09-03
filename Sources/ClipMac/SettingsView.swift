@@ -26,7 +26,7 @@ struct GeneralTab: View {
     @AppStorage("menuBarIcon", store: Prefs.defaults) private var menuBarIcon = true
     @State private var plainOn = Hotkey.Kind.plainPaste.enabled
     @State private var nextOn = Hotkey.Kind.pasteNext.enabled
-    @AppStorage("autoUpdateCheck", store: Prefs.defaults) private var autoUpdate = false
+    @AppStorage("autoUpdateCheck", store: Prefs.defaults) private var autoUpdate = true
     @ObservedObject private var updates = UpdateState.shared
 
     var body: some View {
@@ -67,7 +67,7 @@ struct GeneralTab: View {
                 }
             }
             Section {
-                Text("Clip for Mac \(Capabilities.appVersion) · MIT licensed · no account, no telemetry, no network unless you add a key or turn on the update check.").font(.caption).foregroundStyle(.secondary)
+                Text("Clip for Mac \(Capabilities.appVersion) · MIT licensed · no account, no telemetry; the only network use is the daily update check and any key you add.").font(.caption).foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)

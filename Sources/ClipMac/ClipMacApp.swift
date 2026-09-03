@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AppKit
+import ServiceManagement
 
 @main
 struct ClipMacApp: App {
@@ -55,6 +56,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             DispatchQueue.global(qos: .utility).async { Store.shared.enforceRetention() }
         }
         if WelcomeController.shouldShow { WelcomeController.shared.show() }
+        // A clipboard history only helps while it is running: register as a login item once,
+        // the first time this version runs. Settings › General turns it off.
+        if !Prefs.defaults.bool(forKey: "loginItemOffered") {
+            Prefs.defaults.set(true, forKey: "loginItemOffered")
+            try? SMAppService.mainApp.register()
+        }
         Updates.scheduleBackgroundChecks()
         PinSync.start()
         Sharing.shared.start()

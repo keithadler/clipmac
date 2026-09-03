@@ -8,7 +8,7 @@ Free, MIT licensed, no account, no telemetry. Same family as [Tidy for Mac](http
 
 ## Download
 
-**[Download Clip for Mac 1.0.0 (DMG, 2.7 MB)](https://github.com/keithadler/clipmac/releases/download/v1.0.0/Clip-for-Mac-1.0.0.dmg)** · macOS 14 or later, Apple silicon and Intel
+**[Download Clip for Mac 1.0.1 (DMG, 2.7 MB)](https://github.com/keithadler/clipmac/releases/download/v1.0.1/Clip-for-Mac-1.0.1.dmg)** · macOS 14 or later, Apple silicon and Intel
 
 1. Open the downloaded file and drag **Clip for Mac** into **Applications**.
 2. Open it from Applications. macOS will say it can't check the app for malicious software: click **Done**, then **System Settings › Privacy & Security › Open Anyway**. That happens once, because this is a free app without Apple's $99-a-year certificate.
@@ -57,9 +57,10 @@ them all.
 - **A one-line note** under the menu bar says why something was not saved ("Not saved: a
   password field has focus"), so the rules never look like a lost copy.
 - **Pause** from the menu bar or `clipmac pause 30m`. The icon shows the state.
-- **Updates** are never automatic. "Check for Updates…" asks GitHub once; Settings › General can
-  turn on a daily check that fills in the menu bar icon when a newer release exists and opens the
-  download. Nothing is downloaded or installed by itself, and no identifiers are sent.
+- **Updates** are never installed by themselves. Once a day the app asks GitHub whether a newer
+  release exists (one request, no identifiers) and, if so, fills in the menu bar icon and offers
+  the download. Settings › General turns the daily check off. The app opens at login by default,
+  since a clipboard history only helps while it is running; that is a toggle too.
 - Search matches words (full-text), fragments (substring) and, with the default on-device
   word embeddings, *meaning*: "unpaid bill" finds the invoice without the word.
 

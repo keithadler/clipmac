@@ -510,7 +510,7 @@ enum Prefs {
     }
 
     // Updates (opt-in daily check)
-    static var autoUpdateCheck: Bool { defaults.bool(forKey: "autoUpdateCheck") }
+    static var autoUpdateCheck: Bool { defaults.object(forKey: "autoUpdateCheck") as? Bool ?? true }
     static var lastUpdateCheck: Date? {
         get { let t = defaults.double(forKey: "lastUpdateCheck"); return t > 0 ? Date(timeIntervalSince1970: t) : nil }
         set { defaults.set(newValue?.timeIntervalSince1970 ?? 0, forKey: "lastUpdateCheck") }
