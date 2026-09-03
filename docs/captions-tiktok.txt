@@ -1,0 +1,23 @@
+askmac.png — Ask for Mac
+Free, open source Mac app: ask your Mac a question, get the answer and the file it came from. "How much was the lease deposit?" It reads your PDFs, mail, notes and screenshots ON the Mac. Safe: nothing uploads, no account, and the code is public. Press ⌥ Space in any app. Get it: github.com/keithadler/askmac
+#mac #macos #apple #macbook #freeapp #opensource #privacy #productivity #appleintelligence #macapps #techtok #fyp
+
+watchmac.png — Watch for Mac
+Free, open source Mac app that shows which apps talk to which companies, by name. "Spotify: Spotify, Fastly, Google Cloud." "MeetingBot: Mixpanel, DoubleClick." One notification the first time an app talks to someone new. Safe: it only watches, never blocks, needs no privileges, and nothing leaves your Mac. Get it: github.com/keithadler/watchmac
+#mac #macos #privacy #cybersecurity #apple #macbook #freeapp #opensource #infosec #macapps #techtok #fyp
+
+permsmac.png — Permissions for Mac
+Free, open source Mac app: every permission on your Mac on ONE screen, in plain English. Which apps can see your screen, hear your mic, read every file, and what changed since last week. Safe: it never changes a permission for an app you have, and nothing leaves your Mac. Get it: github.com/keithadler/permsmac
+#mac #macos #privacy #cybersecurity #apple #macbook #freeapp #opensource #screenrecording #macapps #techtok #fyp
+
+clipmac.png — Clip for Mac
+Free, open source Mac app: a clipboard that remembers. Copy five things, paste them back one at a time, search everything you ever copied. Safe: it refuses to record passwords and never leaves your Mac. Get it: github.com/keithadler/clipmac
+#mac #macos #productivity #apple #macbook #freeapp #opensource #clipboard #macapps #workflow #techtok #fyp
+
+tidymac.png — Tidy for Mac
+Free, open source Mac app for the whole family: finds what is eating your disk and slowing your Mac down, explains each item, and only ever moves things to the Trash with an undo receipt. Safe: nothing is deleted, ever, and nothing leaves your Mac. Get it: github.com/keithadler/tidymac
+#mac #macos #apple #macbook #freeapp #opensource #cleanup #storage #macapps #familytech #techtok #fyp
+
+stashmac.png — Stash for Mac
+Free, open source Mac app: encrypted backup into storage you ALREADY have. The Google Drive that comes with Gmail, the OneDrive with 365, iCloud, Dropbox, a disk. Several at once, on a schedule. Safe: your key is 24 words on a card, the provider only ever sees scrambled data, and the code is public. Get it: github.com/keithadler/stashmac
+#mac #macos #backup #privacy #encryption #apple #macbook #freeapp #opensource #googledrive #techtok #fyp
