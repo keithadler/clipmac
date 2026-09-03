@@ -16,7 +16,7 @@ trap 'rm -rf "$STAGE"' EXIT
 cp -R "$APP" "$STAGE/"
 ln -s /Applications "$STAGE/Applications"
 cat > "$STAGE/First time - read me.txt" <<'TXT'
-Clip for Mac — how to install (no experience needed)
+Clip for Mac — how to install
 
 1. Drag the "Clip for Mac" icon onto the "Applications" folder next to it.
    That copies the app onto your Mac. You can close this window afterwards.
@@ -32,7 +32,8 @@ Clip for Mac — how to install (no experience needed)
    "Open Anyway", type your Mac password, and click "Open".
 
 5. Done. It opens like any other app from now on, and macOS never asks again.
-   When it asks to see your Downloads folder, click "Allow".
+   Press Option-Command-V to open your clipboard history. If you want items pasted
+   for you, allow "Accessibility" when the app asks; otherwise just press Command-V.
 
 Why the warning? Apple charges $99 a year for the certificate that skips it.
 This is a free, open-source project without one. All the code is public at

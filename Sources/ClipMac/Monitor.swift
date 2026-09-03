@@ -1,5 +1,5 @@
 //  Pasteboard polling and the capture rules. macOS has no change notification for the pasteboard,
-//  so every clipboard manager polls changeCount. 300 ms while the Mac is in use, 1 s when idle or
+//  so every clipboard manager polls changeCount. 300 ms while someone is at the keyboard, 1 s when
 //  locked, on a coalescing DispatchSourceTimer.
 //
 //  The "never capture" rules below are the product's identity, not options.
@@ -80,14 +80,24 @@ final class Monitor: ObservableObject {
 
     private var idleTicks = 0
 
+    /// Seconds since the user last touched the keyboard or mouse. A copy needs a keystroke or a click,
+    /// so slow polling is only safe while the person is away, never merely because the clipboard is quiet.
+    private static var userIdleSeconds: Double {
+        min(CGEventSource.secondsSinceLastEventType(.combinedSessionState, eventType: .keyDown),
+            CGEventSource.secondsSinceLastEventType(.combinedSessionState, eventType: .leftMouseDown),
+            CGEventSource.secondsSinceLastEventType(.combinedSessionState, eventType: .mouseMoved))
+    }
+
     private func poll() {
-        // Idle backoff: nothing has changed for two minutes → 1 s polling until the next change.
         let pb = NSPasteboard.general
         let cc = pb.changeCount
         if cc == lastChangeCount {
             idleTicks += 1
-            if fastInterval && idleTicks > 400 { fastInterval = false; reschedule() }
-            if idleTicks % 4 == 0 { refreshPauseState(); secureInput = Capabilities.secureInputActive }
+            if idleTicks % 4 == 0 {
+                refreshPauseState(); secureInput = Capabilities.secureInputActive
+                let away = Monitor.userIdleSeconds > 120
+                if fastInterval == away { fastInterval = !away; reschedule() }
+            }
             return
         }
         idleTicks = 0
