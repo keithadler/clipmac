@@ -2,7 +2,12 @@
 // capture path for each kind can be checked with `clipmac list`.
 import AppKit
 let pb = NSPasteboard.general
-func settle() { RunLoop.current.run(until: Date().addingTimeInterval(0.7)) }
+// Long enough for one poll of the app under test, including the slow 1 s cadence a headless CI runner
+// gets (integration.sh passes the same value it waits itself). The file URL is written through NSURL's
+// pasteboard support, which is read back from this process, so the script must stay alive until the
+// app has polled.
+let settleSeconds = Double(ProcessInfo.processInfo.environment["CLIPMAC_SETTLE"] ?? "") ?? 0.7
+func settle() { RunLoop.current.run(until: Date().addingTimeInterval(settleSeconds)) }
 
 // RTF
 let attr = NSAttributedString(string: "Bold heading", attributes: [.font: NSFont.boldSystemFont(ofSize: 18)])
