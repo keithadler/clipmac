@@ -85,5 +85,15 @@ extension RedactorSuite {
             t.check(!Redactor.flags(in: "sha256: " + String(repeating: "0123456789abcdef", count: 4)).contains(.longBase64), "hex hash is not base64")
             t.check(Redactor.looksLikeBase64Secret("QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowMTIzNDU2Nzg5"), "real base64 mixes classes")
         },
+        TestCase(name: "card numbers next to other digits") { t in
+            t.check(Redactor.flags(in: "order 6 4111 1111 1111 1111 end").contains(.cardNumber), "digit before the card")
+            t.check(Redactor.flags(in: "4111 1111 1111 1111 2029").contains(.cardNumber), "year after the card")
+            t.equal(Redactor.mask("pay 6 4111 1111 1111 1111 2029 now").text, "pay 6 [REDACTED CARD] 2029 now", "only the card is masked")
+            t.check(Redactor.flags(in: "3782 822463 10005").contains(.cardNumber), "amex 4-6-5 grouping")
+            t.check(Redactor.flags(in: "4111111111111111").contains(.cardNumber), "unbroken sixteen digits")
+            t.check(!Redactor.flags(in: "415 555 0199 415 555 0100 415 555 0142").contains(.cardNumber), "phone list with 3-digit groups")
+            t.check(!Redactor.flags(in: "4111 1111 1111 1112").contains(.cardNumber), "still needs Luhn")
+            t.check(!Redactor.flags(in: "12345678901234567890123").contains(.cardNumber), "unbroken run over 19 digits")
+        },
     ])
 }

@@ -32,11 +32,66 @@ enum Redactor {
         let flag: Flag
         let label: String
         let regex: NSRegularExpression
-        /// Extra check on the matched text (Luhn for cards, character mix for base64) to cut false positives.
+        /// Extra check on the matched text (character mix for base64) to cut false positives.
         let validate: ((String) -> Bool)?
-        init(flag: Flag, label: String, regex: NSRegularExpression, validate: ((String) -> Bool)? = nil) {
-            self.flag = flag; self.label = label; self.regex = regex; self.validate = validate
+        /// Replaces the regex entirely when a rule needs more than a pattern (card numbers).
+        let finder: ((String) -> [NSRange])?
+        init(flag: Flag, label: String, regex: NSRegularExpression, validate: ((String) -> Bool)? = nil, finder: ((String) -> [NSRange])? = nil) {
+            self.flag = flag; self.label = label; self.regex = regex; self.validate = validate; self.finder = finder
         }
+        func ranges(in text: String, limit: Int) -> [NSRange] {
+            if let finder { return finder(text) }
+            let ns = text as NSString
+            return regex.matches(in: text, options: [], range: NSRange(location: 0, length: min(ns.length, limit)))
+                .map(\.range).filter { validate?(ns.substring(with: $0)) ?? true }
+        }
+    }
+
+    /// Card numbers: within a run of digits separated by single spaces or dashes, any window of
+    /// consecutive groups that looks like a card (13-19 digits, every group 4-6 digits, or one
+    /// unbroken group) and passes Luhn. Neighbouring digits such as "order 6 4111 …" or a trailing
+    /// year no longer hide the card, and phone-number lists with 3-digit groups are left alone.
+    private static let digitRun = re("\\d(?:[ \\-]?\\d)*")
+
+    static func cardRanges(in text: String) -> [NSRange] {
+        let ns = text as NSString
+        var out: [NSRange] = []
+        for m in digitRun.matches(in: text, options: [], range: NSRange(location: 0, length: min(ns.length, 200_000))) {
+            let run = ns.substring(with: m.range)
+            guard run.filter(\.isNumber).count >= 13 else { continue }
+            // groups as (offset, length) within the run
+            var groups: [(Int, Int)] = []
+            var start = 0
+            let chars = Array(run)
+            for (i, c) in chars.enumerated() where !c.isNumber {
+                groups.append((start, i - start)); start = i + 1
+            }
+            groups.append((start, chars.count - start))
+            if groups.count == 1 {
+                if (13...19).contains(chars.count), luhn(run) { out.append(m.range) }
+                continue
+            }
+            var i = 0
+            while i < groups.count {
+                var found = false
+                var j = groups.count - 1
+                while j >= i {
+                    let window = groups[i...j]
+                    let digits = window.reduce(0) { $0 + $1.1 }
+                    if (13...19).contains(digits), window.allSatisfy({ (4...6).contains($0.1) }) {
+                        let lo = groups[i].0, hi = groups[j].0 + groups[j].1
+                        let slice = String(chars[lo..<hi])
+                        if luhn(slice) {
+                            out.append(NSRange(location: m.range.location + lo, length: hi - lo))
+                            i = j + 1; found = true; break
+                        }
+                    }
+                    j -= 1
+                }
+                if !found { i += 1 }
+            }
+        }
+        return out
     }
 
     /// Real base64 secrets mix cases and digits; a long run of one class is prose, a hash, or padding.
@@ -61,7 +116,7 @@ enum Redactor {
         Pattern(flag: .apiKey, label: "API KEY", regex: re("\\b(?:glpat|pypi|npm|hf|shpat|shpss|sq0atp|SG\\.)[A-Za-z0-9_\\-.]{20,}")),
         Pattern(flag: .jwt, label: "JWT", regex: re("\\beyJ[A-Za-z0-9_\\-]{8,}\\.[A-Za-z0-9_\\-]{8,}\\.[A-Za-z0-9_\\-]{8,}\\b")),
         Pattern(flag: .credential, label: "CREDENTIAL", regex: re("(?i)\\b(?:api[_\\-]?key|secret|token|passw(?:or)?d|auth|bearer)\\b\\s*[:=]\\s*[\"']?(?!\\[REDACTED)([^\\s\"',;]{8,})")),
-        Pattern(flag: .cardNumber, label: "CARD", regex: re("\\b(?:\\d[ \\-]?){13,19}\\b"), validate: luhn),
+        Pattern(flag: .cardNumber, label: "CARD", regex: re("\\d{13,19}"), finder: cardRanges),
         Pattern(flag: .longBase64, label: "BASE64", regex: re("(?<![A-Za-z0-9+/=])[A-Za-z0-9+/]{48,}={0,2}(?![A-Za-z0-9+/=])"), validate: looksLikeBase64Secret),
     ]
 
@@ -78,13 +133,8 @@ enum Redactor {
     /// Which categories the text trips. Cheap enough to run on every capture.
     static func flags(in text: String) -> Flag {
         var f: Flag = []
-        let ns = text as NSString
-        let range = NSRange(location: 0, length: min(ns.length, 200_000))
         for p in patterns where !f.contains(p.flag) {
-            for m in p.regex.matches(in: text, options: [], range: range) {
-                if let v = p.validate, !v(ns.substring(with: m.range)) { continue }
-                f.insert(p.flag); break
-            }
+            if !p.ranges(in: text, limit: 200_000).isEmpty { f.insert(p.flag) }
         }
         return f
     }
@@ -96,21 +146,17 @@ enum Redactor {
         var labels: [String] = []
         for p in patterns {
             let ns = out as NSString
-            let matches = p.regex.matches(in: out, options: [], range: NSRange(location: 0, length: ns.length))
-            for m in matches.reversed() {
-                let hit = ns.substring(with: m.range)
-                if let v = p.validate, !v(hit) { continue }
-                let replacement: String
-                if p.flag == .credential, m.numberOfRanges > 1, m.range(at: 1).location != NSNotFound {
-                    // keep "password=" so the summary still makes sense, mask only the value
-                    let valueRange = m.range(at: 1)
-                    out = (out as NSString).replacingCharacters(in: valueRange, with: "[REDACTED \(p.label)]")
+            if p.flag == .credential {
+                // keep "password=" so the summary still makes sense, mask only the value
+                for m in p.regex.matches(in: out, options: [], range: NSRange(location: 0, length: ns.length)).reversed()
+                where m.numberOfRanges > 1 && m.range(at: 1).location != NSNotFound {
+                    out = (out as NSString).replacingCharacters(in: m.range(at: 1), with: "[REDACTED \(p.label)]")
                     if !labels.contains(p.label) { labels.append(p.label) }
-                    continue
-                } else {
-                    replacement = "[REDACTED \(p.label)]"
                 }
-                out = (out as NSString).replacingCharacters(in: m.range, with: replacement)
+                continue
+            }
+            for r in p.ranges(in: out, limit: ns.length).reversed() {
+                out = (out as NSString).replacingCharacters(in: r, with: "[REDACTED \(p.label)]")
                 if !labels.contains(p.label) { labels.append(p.label) }
             }
         }
