@@ -15,16 +15,14 @@ struct MenuBarContent: View {
             Button("Clear Paste Stack") { stack.clear() }
         }
         Divider()
+        // Flat, not a submenu: nested menus in a menu bar extra are hard to hover into.
         if monitor.paused {
             Button("Resume Capture") { monitor.resume() }
-            if let u = monitor.pausedUntil { Text("Paused until \(u.formatted(date: .omitted, time: .shortened))") }
+            if let u = monitor.pausedUntil, u.timeIntervalSinceNow < 86400 { Text("Paused until \(u.formatted(date: .omitted, time: .shortened))") }
         } else {
-            Menu("Pause Capture") {
-                Button("10 minutes") { monitor.pause(for: 600) }
-                Button("30 minutes") { monitor.pause(for: 1800) }
-                Button("1 hour") { monitor.pause(for: 3600) }
-                Button("Until I resume") { monitor.pause(for: 365 * 86400) }
-            }
+            Button("Pause Capture for 10 Minutes") { monitor.pause(for: 600) }
+            Button("Pause Capture for 1 Hour") { monitor.pause(for: 3600) }
+            Button("Pause Capture Until Resumed") { monitor.pause(for: 365 * 86400) }
         }
         if monitor.secureInput { Text("Password field active: not capturing") }
         Divider()
@@ -32,13 +30,13 @@ struct MenuBarContent: View {
             .disabled(!((Prefs.onDeviceModel && Capabilities.onDeviceModelAvailable) || Prefs.cloudAssist))
         Button("Export Pins as Text Replacements…") { Snippets.exportWithDialog() }
         Divider()
+        Button("Clip for Mac Help") { Help.open() }.keyboardShortcut("?")
+        Button("Keyboard Shortcuts") { Help.open(anchor: "keys") }
+        Button("Welcome Tour") { WelcomeController.shared.show() }
+        Button("Check for Updates…") { Updates.checkAndPresent() }
+        Button("About Clip for Mac") { Updates.showAbout() }
+        Divider()
         Button("Settings…") { SettingsOpener.open() }.keyboardShortcut(",")
-        Menu("Help") {
-            Button("Welcome Tour") { WelcomeController.shared.show() }
-            Button("Clip for Mac Help") { NSWorkspace.shared.open(URL(string: "https://github.com/keithadler/clipmac#readme")!) }
-            Button("Check for Updates…") { Updates.checkAndPresent() }
-            Button("About Clip for Mac") { Updates.showAbout() }
-        }
         Button("Quit Clip for Mac") { NSApp.terminate(nil) }.keyboardShortcut("q")
     }
 }

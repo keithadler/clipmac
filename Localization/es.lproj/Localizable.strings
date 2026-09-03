@@ -170,3 +170,9 @@
 "Paste as Plain Text    %@" = "Pegar sin formato    %@";
 "Paste Next of %lld    %@" = "Pegar siguiente de %lld    %@";
 "Clear Paste Stack" = "Vaciar pila de pegado";
+"Keyboard Shortcuts" = "Atajos de teclado";
+"Privacy" = "Privacidad";
+"All shortcuts" = "Todos los atajos";
+"Pause Capture for 10 Minutes" = "Pausar captura 10 minutos";
+"Pause Capture for 1 Hour" = "Pausar captura 1 hora";
+"Pause Capture Until Resumed" = "Pausar captura hasta reanudar";

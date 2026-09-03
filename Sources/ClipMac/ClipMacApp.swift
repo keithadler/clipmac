@@ -29,9 +29,9 @@ struct ClipMacApp: App {
                 CommandGroup(replacing: .appInfo) { Button("About Clip for Mac") { Updates.showAbout() } }
                 CommandGroup(after: .appInfo) { Button("Check for Updates…") { Updates.checkAndPresent() } }
                 CommandGroup(replacing: .help) {
-                    Button("Clip for Mac Help") { NSWorkspace.shared.open(URL(string: "https://github.com/keithadler/clipmac#readme")!) }
+                    Button("Clip for Mac Help") { Help.open() }
                     Button("Welcome Tour") { WelcomeController.shared.show() }
-                    Button("Report a Problem…") { NSWorkspace.shared.open(URL(string: "https://github.com/keithadler/clipmac/issues")!) }
+                    Button("Report a Problem…") { NSWorkspace.shared.open(Help.issues) }
                 }
             }
     }

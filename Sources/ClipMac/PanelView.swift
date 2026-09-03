@@ -133,6 +133,7 @@ struct PanelView: View {
     private var footer: some View {
         HStack(spacing: 14) {
             hint("↩", "Paste"); hint("⌘↩", "Plain"); hint("⇧↩", "Queue"); hint("⌘C", "Copy"); hint("⌘P", "Pin"); hint("⌘⌫", "Delete"); hint("esc", "Close")
+            Button { Help.open(anchor: "keys") } label: { Image(systemName: "questionmark.circle") }.buttonStyle(.plain).foregroundStyle(.secondary).help("All shortcuts")
             Spacer()
             if !stack.isEmpty {
                 Text(String(format: String(localized: "%lld queued · %@ pastes next"), stack.count, Hotkey.describe(.pasteNext)))

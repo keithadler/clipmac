@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clip for Mac Help</title>
+<style>
+  :root { color-scheme: light dark; --fg: #1d1d1f; --muted: #6e6e73; --bg: #fff; --card: #f5f5f7; --accent: #2f63d6; --line: #e5e5ea; }
+  @media (prefers-color-scheme: dark) { :root { --fg: #f5f5f7; --muted: #a1a1a6; --bg: #1c1c1e; --card: #2c2c2e; --accent: #6ea0ff; --line: #3a3a3c; } }
+  body { margin: 0; font: 15px/1.55 -apple-system, "SF Pro Text", Helvetica, Arial, sans-serif; color: var(--fg); background: var(--bg); }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 30px; margin: 0 0 4px; } h1 small { display: block; font-size: 15px; font-weight: 400; color: var(--muted); }
+  h2 { font-size: 20px; margin: 36px 0 10px; padding-top: 12px; border-top: 1px solid var(--line); }
+  h3 { font-size: 16px; margin: 20px 0 6px; }
+  p, li { color: var(--fg); } .muted { color: var(--muted); }
+  kbd { display: inline-block; min-width: 1.4em; padding: 1px 6px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; background: var(--card); font: 13px ui-monospace, "SF Mono", Menlo, monospace; text-align: center; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 16px; } td, th { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; } th { color: var(--muted); font-weight: 600; font-size: 13px; }
+  code, pre { font: 13px ui-monospace, "SF Mono", Menlo, monospace; } pre { background: var(--card); padding: 12px 14px; border-radius: 8px; overflow-x: auto; }
+  .card { background: var(--card); border-radius: 10px; padding: 14px 16px; margin: 12px 0; }
+  nav a { margin-right: 14px; color: var(--accent); text-decoration: none; } a { color: var(--accent); }
+  .rules li { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<main>
+<h1>Clip for Mac <small>Clipboard history that refuses to capture secrets</small></h1>
+<nav><a href="#start">Getting started</a><a href="#keys">Keyboard</a><a href="#paste">Pasting</a><a href="#secrets">Secrets</a><a href="#pins">Pins</a><a href="#ask">Ask</a><a href="#cli">Command line</a><a href="#privacy">Privacy</a><a href="#trouble">Troubleshooting</a></nav>
+
+<h2 id="start">Getting started</h2>
+<p>Clip for Mac lives in the menu bar. Everything you copy is kept for 30 days (adjustable), searchable, and one keystroke away. Press <kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd> in any app to open the panel over what you're doing. Type to search, press <kbd>↩</kbd> to paste, <kbd>esc</kbd> to close.</p>
+<div class="card">The panel never takes focus away from the app you were using, so the item goes exactly where your cursor was.</div>
+
+<h2 id="keys">Keyboard</h2>
+<h3>Anywhere</h3>
+<table>
+<tr><td><kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd></td><td>Open or close the panel</td></tr>
+<tr><td><kbd>⌥</kbd><kbd>⇧</kbd><kbd>⌘</kbd><kbd>V</kbd></td><td>Paste whatever is on the clipboard as plain text, without opening the panel</td></tr>
+<tr><td><kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd></td><td>Paste the next item from the paste stack</td></tr>
+</table>
+<p class="muted">All three can be changed or turned off in Settings › General. The app tells you if another app already owns a shortcut.</p>
+<h3>In the panel</h3>
+<table>
+<tr><td>Type</td><td>Search. Words, fragments, and meaning ("that thing about the invoice") all work.</td></tr>
+<tr><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>Move the selection</td></tr>
+<tr><td><kbd>↩</kbd></td><td>Paste the selected item</td></tr>
+<tr><td><kbd>⌘</kbd><kbd>↩</kbd></td><td>Paste as plain text (formatting stripped)</td></tr>
+<tr><td><kbd>⇧</kbd><kbd>↩</kbd></td><td>Add to the paste stack (see below)</td></tr>
+<tr><td><kbd>⌘</kbd><kbd>1</kbd>…<kbd>9</kbd></td><td>Paste one of the top nine directly</td></tr>
+<tr><td><kbd>⌘</kbd><kbd>C</kbd></td><td>Copy to the clipboard without pasting</td></tr>
+<tr><td><kbd>⌘</kbd><kbd>P</kbd></td><td>Pin or unpin</td></tr>
+<tr><td><kbd>⌘</kbd><kbd>⌫</kbd></td><td>Delete the item (really deleted, no undo)</td></tr>
+<tr><td><kbd>esc</kbd></td><td>Close</td></tr>
+</table>
+<p>Right-click any item for the same actions plus <em>Open Link</em>, <em>Show in Finder</em> for files, and <em>Forget everything from this app</em>. You can also drag an item out of the panel into another app.</p>
+
+<h2 id="paste">Pasting: two modes</h2>
+<p><strong>Paste for you.</strong> When the Accessibility permission is granted, choosing an item pastes it into the app you were using. That permission is how macOS lets an app press <kbd>⌘</kbd><kbd>V</kbd> on your behalf; Clip for Mac uses it for nothing else. Grant it in Settings › Paste. Afterwards your previous clipboard is put back (adjustable delay, or off).</p>
+<p><strong>Copy only.</strong> Without that permission, choosing an item copies it and closes the panel; you press <kbd>⌘</kbd><kbd>V</kbd>. Everything else works the same. The panel footer tells you which mode you're in.</p>
+<h3>The paste stack</h3>
+<p>Press <kbd>⇧</kbd><kbd>↩</kbd> on several items to queue them, then press <kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd> in a form to paste them one after another, oldest first. The menu bar shows how many are queued. The stack is cleared when the app quits.</p>
+
+<h2 id="secrets">What is never captured</h2>
+<ul class="rules">
+<li>Anything a password manager marks as <em>concealed</em> or <em>transient</em> (1Password, Bitwarden, Keychain Access, Strongbox, KeePassXC and others do this).</li>
+<li>Anything copied while a <em>password field</em> has focus. The menu bar icon shows a lock while that is true.</li>
+<li>Anything copied from an app on the <em>exclusion list</em> (Settings › Capture). It ships pre-filled with the common password managers; add any app.</li>
+<li>Anything larger than the size cap (50 MB by default).</li>
+</ul>
+<p>These are not settings. There is no switch that turns them off.</p>
+<p>Items that still look like secrets (API keys, tokens, private keys, card numbers, <code>password=…</code>) are marked with a shield in the panel. They stay on your Mac and are masked before any optional cloud request. <code>clipmac forget --sensitive</code> deletes them all at once.</p>
+<h3>Pause</h3>
+<p>Pause capture from the menu bar for 10 minutes, 30 minutes, an hour, or until you resume. The icon changes while paused. Copying still works normally; it just isn't recorded.</p>
+
+<h2 id="pins">Pins and snippets</h2>
+<p>Pinned items sit at the top of the panel and never expire. Give a pin a keyword in the preview pane and it becomes a snippet: <code>clipmac snip &lt;keyword&gt;</code> prints it, and the menu bar can export all keyworded pins as a macOS Text Replacement list. Drop that file onto System Settings › Keyboard › Text Replacements and macOS expands them as you type. Clip for Mac itself never watches what you type.</p>
+
+<h2 id="ask">Ask your clipboard</h2>
+<p>Off unless you turn it on in Settings › Assist. Three levels, each stricter about what leaves the Mac:</p>
+<table>
+<tr><th>Level</th><th>What</th><th>Leaves the Mac?</th></tr>
+<tr><td>Search by meaning</td><td>On-device sentence embeddings. On by default; "Similar meaning" section in the panel.</td><td>No</td></tr>
+<tr><td>Apple's on-device model</td><td>macOS 26 with Apple Intelligence. "Summarize what I copied today", "turn the last five items into a list".</td><td>No</td></tr>
+<tr><td>Your own API key</td><td>Anthropic or OpenAI. You pick the items, see the exact redacted payload, and confirm every request. Every request is logged.</td><td>Only what you confirm</td></tr>
+</table>
+<p class="muted">The key is stored in your login Keychain. The provider bills their metered API, which is separate from a Claude Pro or ChatGPT Plus subscription. No proxy, no account, no relay through anyone's server.</p>
+
+<h2 id="cli">Command line</h2>
+<p><code>clipmac</code> is the same app, on your PATH after <code>./build-app.sh --install</code>. Every command takes <code>--json</code>. Items are a position (1 = newest) or a stable id written as <code>#42</code>.</p>
+<pre>clipmac list --limit 20            clipmac search "invoice" --semantic
+clipmac get 3                      clipmac copy #42 --plain
+clipmac pin 3 --keyword sig        clipmac snip sig
+clipmac pause 30m                  clipmac resume
+clipmac forget #42 | --app com.example.thing | --sensitive
+clipmac wipe --yes                 clipmac status
+clipmac assist "what did I work on today" --local
+clipmac assist log                 clipmac selftest</pre>
+<p>Scripts and Shortcuts can also drive the running app with URLs: <code>clipmac://open</code>, <code>clipmac://search?q=invoice</code>, <code>clipmac://paste/42</code>, <code>clipmac://copy/42?plain=1</code>, <code>clipmac://pause?minutes=30</code>, <code>clipmac://resume</code>, <code>clipmac://settings</code>. See <code>man clipmac</code>.</p>
+
+<h2 id="privacy">Privacy and storage</h2>
+<p>History lives in <code>~/Library/Application Support/Clip for Mac/history.db</code> with images and rich text in a <code>blobs</code> folder beside it. Defaults: 30 days, 2,000 items, 1 GB; pinned items are exempt; deleting is real deletion. "Session only" in Settings › History keeps everything in memory instead.</p>
+<p><strong>Clip for Mac does not encrypt the database itself.</strong> Search can't index ciphertext, and half-encryption would imply more than it delivers. It relies on FileVault and warns you when FileVault is off. No account, no telemetry, no network unless you add your own key or click Check for Updates.</p>
+
+<h2 id="trouble">Troubleshooting</h2>
+<h3>The panel doesn't open</h3>
+<p>Another app probably owns <kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd>. The menu bar says so; pick a different shortcut in Settings › General. You can always open the panel from the menu bar.</p>
+<h3>Choosing an item doesn't paste</h3>
+<p>Accessibility isn't granted, so you're in copy-only mode: press <kbd>⌘</kbd><kbd>V</kbd>. To grant it, Settings › Paste › Grant Accessibility. After rebuilding from source the permission has to be granted again unless you ran <code>./make-local-identity.sh</code>.</p>
+<h3>The wrong thing was pasted</h3>
+<p>A slow app read the clipboard after Clip for Mac had already restored your previous one. Raise the delay in Settings › Paste, or turn restoring off.</p>
+<h3>Something I copied isn't in the history</h3>
+<p>Check the menu bar: paused, or a password field had focus. Settings › Capture shows the reason the last item was skipped. Copies from excluded apps are never recorded.</p>
+<h3>Starting over</h3>
+<p>Settings › History › Forget everything, or <code>clipmac wipe --yes</code>. To remove the app entirely, delete it from Applications and the folder above; remove the API key from Keychain Access if you added one.</p>
+
+<p class="muted" style="margin-top:40px">Clip for Mac is MIT licensed. Source and issues: <a href="https://github.com/keithadler/clipmac">github.com/keithadler/clipmac</a></p>
+</main>
+</body>
+</html>

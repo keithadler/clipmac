@@ -76,3 +76,32 @@ enum Updates {
         ])
     }
 }
+
+/// Help lives inside the bundle (docs/Help.html) so it works offline and before the repo is public;
+/// the GitHub README is the fallback when running the bare binary from a build directory.
+enum Help {
+    static let readme = URL(string: "https://github.com/keithadler/clipmac#readme")!
+    static let issues = URL(string: "https://github.com/keithadler/clipmac/issues")!
+
+    static var bundledPage: URL? {
+        if let url = Bundle.main.url(forResource: "Help", withExtension: "html") { return url }
+        // Launched through the clipmac symlink: find the enclosing .app the way Capabilities.appVersion does.
+        var url = (Bundle.main.executableURL ?? URL(fileURLWithPath: CommandLine.arguments[0])).resolvingSymlinksInPath()
+        while url.path != "/" {
+            if url.pathExtension == "app", let u = Bundle(url: url)?.url(forResource: "Help", withExtension: "html") { return u }
+            url = url.deletingLastPathComponent()
+        }
+        return nil
+    }
+
+    @MainActor
+    static func open(anchor: String? = nil) {
+        if let page = bundledPage {
+            var comps = URLComponents(url: page, resolvingAgainstBaseURL: false)!
+            comps.fragment = anchor
+            NSWorkspace.shared.open(comps.url ?? page)
+        } else {
+            NSWorkspace.shared.open(readme)
+        }
+    }
+}

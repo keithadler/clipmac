@@ -67,6 +67,7 @@ struct WelcomeView: View {
             Spacer()
             HStack {
                 Button("Open Settings…") { done(); SettingsOpener.open() }.buttonStyle(.link)
+                Button("Help") { Help.open() }.buttonStyle(.link)
                 Spacer()
                 Button("Get started") { done() }.keyboardShortcut(.defaultAction)
             }
