@@ -69,7 +69,7 @@ enum UpdatesSuite {
             let sem2 = DispatchSemaphore(value: 0)
             Task { await Updates.runCheck(quiet: false); sem2.signal() }
             while sem2.wait(timeout: .now()) != .success { RunLoop.main.run(until: Date().addingTimeInterval(0.05)) }
-            t.equal(state.available?.version, "9.9.9", "manual check still reports it")
+            t.equal(state.available?.version, "9.9.9", "manual check still reports it (lastError: \(state.lastError ?? "none"), current: \(Capabilities.appVersion))")
             Updates.skip("9.9.9")
             t.check(state.available == nil && Prefs.skippedVersion == "9.9.9", "skip clears and remembers")
             state.available = nil
