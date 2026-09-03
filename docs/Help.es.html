@@ -24,7 +24,7 @@
 <body>
 <main>
 <h1>Clip for Mac <small>Historial del portapapeles que se niega a capturar secretos</small></h1>
-<nav><a href="#start">Primeros pasos</a><a href="#keys">Teclado</a><a href="#paste">Pegar</a><a href="#secrets">Secretos</a><a href="#pins">Fijados</a><a href="#ask">Preguntar</a><a href="#cli">Terminal</a><a href="#privacy">Privacidad</a><a href="#trouble">Problemas</a></nav>
+<nav><a href="#start">Primeros pasos</a><a href="#keys">Teclado</a><a href="#paste">Pegar</a><a href="#secrets">Secretos</a><a href="#pins">Fijados</a><a href="#macs">Otros Macs</a><a href="#ask">Preguntar</a><a href="#cli">Terminal</a><a href="#privacy">Privacidad</a><a href="#trouble">Problemas</a></nav>
 
 <h2 id="start">Primeros pasos</h2>
 <p>Clip for Mac vive en la barra de menús. Todo lo que copias se conserva 30 días (ajustable), se puede buscar y está a una tecla de distancia. Pulsa <kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd> en cualquier app para abrir el panel sobre lo que estés haciendo. Escribe para buscar, pulsa <kbd>↩</kbd> para pegar y <kbd>esc</kbd> para cerrar.</p>
@@ -44,6 +44,7 @@
 <tr><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>Mover la selección</td></tr>
 <tr><td><kbd>↩</kbd></td><td>Pegar el elemento seleccionado</td></tr>
 <tr><td><kbd>⌘</kbd><kbd>↩</kbd></td><td>Pegar sin formato</td></tr>
+<tr><td><kbd>⌥</kbd><kbd>↩</kbd></td><td>Pegar limpio: recortado y sin parámetros de seguimiento en los enlaces</td></tr>
 <tr><td><kbd>⇧</kbd><kbd>↩</kbd></td><td>Añadir a la pila de pegado (ver más abajo)</td></tr>
 <tr><td><kbd>⌘</kbd><kbd>1</kbd>…<kbd>9</kbd></td><td>Pegar directamente uno de los nueve primeros</td></tr>
 <tr><td><kbd>⌘</kbd><kbd>C</kbd></td><td>Copiar al portapapeles sin pegar</td></tr>
@@ -51,13 +52,17 @@
 <tr><td><kbd>⌘</kbd><kbd>⌫</kbd></td><td>Borrar el elemento (se borra de verdad, sin deshacer)</td></tr>
 <tr><td><kbd>esc</kbd></td><td>Cerrar</td></tr>
 </table>
-<p>Haz clic derecho en cualquier elemento para las mismas acciones más <em>Abrir enlace</em>, <em>Mostrar en el Finder</em> para archivos y <em>Olvidar todo lo de esta app</em>. También puedes arrastrar un elemento del panel a otra app.</p>
+<p>Haz clic derecho en cualquier elemento para las mismas acciones más <em>Pegar como</em> (minúsculas, MAYÚSCULAS, Mayúscula Inicial, una sola línea, enlace Markdown, JSON formateado, enlace sin parámetros de seguimiento), <em>Abrir enlace</em>, <em>Mostrar en el Finder</em> para archivos y <em>Olvidar todo lo de esta app</em>. También puedes arrastrar un elemento del panel a otra app.</p>
+<h3>Leer la lista</h3>
+<p>Un elemento copiado más de una vez, aunque cambie el espaciado, sigue siendo una fila con un contador <strong>×3</strong>. Con el permiso de Accesibilidad, la segunda línea muestra la ventana de origen («Safari · GitHub issue #42»). Las capturas muestran el texto que Vision leyó en ellas, y ese texto es el que encuentra la búsqueda. Ambas cosas se pueden desactivar en Ajustes › Captura.</p>
 
 <h2 id="paste">Pegar: dos modos</h2>
 <p><strong>Pega por ti.</strong> Con el permiso de Accesibilidad concedido, elegir un elemento lo pega en la app que estabas usando. Ese permiso es la forma en que macOS deja que una app pulse <kbd>⌘</kbd><kbd>V</kbd> por ti; Clip for Mac no lo usa para nada más. Concédelo en Ajustes › Pegar. Después se restaura tu portapapeles anterior (retardo ajustable, o desactivado).</p>
 <p><strong>Solo copia.</strong> Sin ese permiso, elegir un elemento lo copia y cierra el panel; tú pulsas <kbd>⌘</kbd><kbd>V</kbd>. Todo lo demás funciona igual. El pie del panel indica en qué modo estás.</p>
 <h3>La pila de pegado</h3>
-<p>Pulsa <kbd>⇧</kbd><kbd>↩</kbd> sobre varios elementos para encolarlos y luego pulsa <kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd> en un formulario para pegarlos uno tras otro, el más antiguo primero. La barra de menús muestra cuántos hay en cola. La pila se vacía al salir de la app.</p>
+<p>Pulsa <kbd>⇧</kbd><kbd>↩</kbd> sobre varios elementos para encolarlos y luego pulsa <kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd> en un formulario para pegarlos uno tras otro, el más antiguo primero. El icono de la pila en el pie del panel y la barra de menús también ofrecen <em>Pegar todo lo encolado</em>, uno por línea o como lista Markdown. La pila se vacía al salir de la app.</p>
+<h3>Cuando algo no se guarda</h3>
+<p>Aparece un aviso de una línea bajo la barra de menús durante dos segundos: «No guardado: un campo de contraseña tiene el foco». Se desactiva en Ajustes › Captura.</p>
 
 <h2 id="secrets">Lo que nunca se captura</h2>
 <ul class="rules">
@@ -73,6 +78,10 @@
 
 <h2 id="pins">Fijados y fragmentos</h2>
 <p>Los elementos fijados están arriba del panel y nunca caducan. Dale una palabra clave a un fijado en el panel de vista previa y se convierte en un fragmento: <code>clipmac snip &lt;palabra&gt;</code> lo imprime, y desde la barra de menús puedes exportar todos los fijados con palabra clave como lista de sustituciones de texto de macOS. Arrastra ese archivo a Ajustes del Sistema › Teclado › Sustituciones de texto y macOS los expandirá al escribir. Clip for Mac nunca observa lo que tecleas.</p>
+
+<h2 id="macs">Tus otros Macs</h2>
+<p><strong>Fijados a través de una carpeta.</strong> Ajustes › Historial › Fijados en otros Macs: elige una carpeta que iCloud Drive, Dropbox u otro servicio ya sincronice. Clip for Mac escribe allí un pequeño archivo JSON con suma de comprobación cada vez que cambian los fijados y lo lee cuando otro Mac lo cambió. El historial nunca viaja. <code>clipmac pins export</code>, <code>import</code> y <code>sync</code> hacen lo mismo desde la terminal.</p>
+<p><strong>Compartir en esta red.</strong> Ajustes › Compartir. Actívalo en los dos Macs; cada uno ve al otro en Cerca. Pulsa Emparejar en uno y ambas pantallas mostrarán un código de seis dígitos. Pulsa Emparejar en los dos solo si los códigos coinciden; un código distinto significa que alguien está en medio. A partir de ahí, los fijados y los últimos N elementos de texto se envían cifrados de extremo a extremo cada vez que cambian los fijados y cada pocos minutos. Los elementos que parecen secretos, las imágenes, los archivos y lo que venga de apps excluidas nunca se envían. Quita un Mac de la lista de emparejados para dejar de compartir.</p>
 
 <h2 id="ask">Pregunta a tu portapapeles</h2>
 <p>Desactivado salvo que lo actives en Ajustes › Asistente. Tres niveles, cada uno más estricto sobre lo que sale del Mac:</p>
@@ -94,6 +103,7 @@ clipmac forget #42 | --app com.example.thing | --sensitive
 clipmac wipe --yes                 clipmac status
 clipmac assist "en qué trabajé hoy" --local
 clipmac assist log                 clipmac selftest</pre>
+<p>La app Atajos tiene acciones reales cuando la app se compiló con Xcode disponible: Obtener elementos recientes, Buscar en Clip for Mac, Copiar elemento, Pausar y Reanudar captura, Abrir Clip for Mac. Los elementos que parecen secretos se omiten salvo que la acción los pida.</p>
 <p>Los scripts y Atajos también pueden controlar la app con URLs: <code>clipmac://open</code>, <code>clipmac://search?q=factura</code>, <code>clipmac://paste/42</code>, <code>clipmac://copy/42?plain=1</code>, <code>clipmac://pause?minutes=30</code>, <code>clipmac://resume</code>, <code>clipmac://settings</code>. Consulta <code>man clipmac</code>.</p>
 
 <h2 id="privacy">Privacidad y almacenamiento</h2>

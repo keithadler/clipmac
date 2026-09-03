@@ -24,7 +24,7 @@
 <body>
 <main>
 <h1>Clip for Mac <small>Clipboard history that refuses to capture secrets</small></h1>
-<nav><a href="#start">Getting started</a><a href="#keys">Keyboard</a><a href="#paste">Pasting</a><a href="#secrets">Secrets</a><a href="#pins">Pins</a><a href="#ask">Ask</a><a href="#cli">Command line</a><a href="#privacy">Privacy</a><a href="#trouble">Troubleshooting</a></nav>
+<nav><a href="#start">Getting started</a><a href="#keys">Keyboard</a><a href="#paste">Pasting</a><a href="#secrets">Secrets</a><a href="#pins">Pins</a><a href="#macs">Other Macs</a><a href="#ask">Ask</a><a href="#cli">Command line</a><a href="#privacy">Privacy</a><a href="#trouble">Troubleshooting</a></nav>
 
 <h2 id="start">Getting started</h2>
 <p>Clip for Mac lives in the menu bar. Everything you copy is kept for 30 days (adjustable), searchable, and one keystroke away. Press <kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd> in any app to open the panel over what you're doing. Type to search, press <kbd>↩</kbd> to paste, <kbd>esc</kbd> to close.</p>
@@ -44,6 +44,7 @@
 <tr><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>Move the selection</td></tr>
 <tr><td><kbd>↩</kbd></td><td>Paste the selected item</td></tr>
 <tr><td><kbd>⌘</kbd><kbd>↩</kbd></td><td>Paste as plain text (formatting stripped)</td></tr>
+<tr><td><kbd>⌥</kbd><kbd>↩</kbd></td><td>Paste cleaned: trimmed, tracking parameters removed from links</td></tr>
 <tr><td><kbd>⇧</kbd><kbd>↩</kbd></td><td>Add to the paste stack (see below)</td></tr>
 <tr><td><kbd>⌘</kbd><kbd>1</kbd>…<kbd>9</kbd></td><td>Paste one of the top nine directly</td></tr>
 <tr><td><kbd>⌘</kbd><kbd>C</kbd></td><td>Copy to the clipboard without pasting</td></tr>
@@ -51,13 +52,17 @@
 <tr><td><kbd>⌘</kbd><kbd>⌫</kbd></td><td>Delete the item (really deleted, no undo)</td></tr>
 <tr><td><kbd>esc</kbd></td><td>Close</td></tr>
 </table>
-<p>Right-click any item for the same actions plus <em>Open Link</em>, <em>Show in Finder</em> for files, and <em>Forget everything from this app</em>. You can also drag an item out of the panel into another app.</p>
+<p>Right-click any item for the same actions plus <em>Paste As</em> (lowercase, UPPERCASE, Title Case, one line, Markdown link, pretty-printed JSON, link without tracking parameters), <em>Open Link</em>, <em>Show in Finder</em> for files, and <em>Forget everything from this app</em>. You can also drag an item out of the panel into another app.</p>
+<h3>Reading the list</h3>
+<p>An item copied more than once, even with different spacing, stays one row with a <strong>×3</strong> count. With the Accessibility permission, the second line shows the window the item came from ("Safari · GitHub issue #42"). Screenshots show the text Vision read out of them, and that text is what search matches. Both can be turned off in Settings › Capture.</p>
 
 <h2 id="paste">Pasting: two modes</h2>
 <p><strong>Paste for you.</strong> When the Accessibility permission is granted, choosing an item pastes it into the app you were using. That permission is how macOS lets an app press <kbd>⌘</kbd><kbd>V</kbd> on your behalf; Clip for Mac uses it for nothing else. Grant it in Settings › Paste. Afterwards your previous clipboard is put back (adjustable delay, or off).</p>
 <p><strong>Copy only.</strong> Without that permission, choosing an item copies it and closes the panel; you press <kbd>⌘</kbd><kbd>V</kbd>. Everything else works the same. The panel footer tells you which mode you're in.</p>
 <h3>The paste stack</h3>
-<p>Press <kbd>⇧</kbd><kbd>↩</kbd> on several items to queue them, then press <kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd> in a form to paste them one after another, oldest first. The menu bar shows how many are queued. The stack is cleared when the app quits.</p>
+<p>Press <kbd>⇧</kbd><kbd>↩</kbd> on several items to queue them, then press <kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd><kbd>V</kbd> in a form to paste them one after another, oldest first. The stack icon in the panel footer and the menu bar also offer <em>Paste All Queued</em>, one per line or as a Markdown list. The stack is cleared when the app quits.</p>
+<h3>When something isn't saved</h3>
+<p>A one-line note appears under the menu bar for two seconds: "Not saved: a password field has focus". Settings › Capture turns it off.</p>
 
 <h2 id="secrets">What is never captured</h2>
 <ul class="rules">
@@ -73,6 +78,10 @@
 
 <h2 id="pins">Pins and snippets</h2>
 <p>Pinned items sit at the top of the panel and never expire. Give a pin a keyword in the preview pane and it becomes a snippet: <code>clipmac snip &lt;keyword&gt;</code> prints it, and the menu bar can export all keyworded pins as a macOS Text Replacement list. Drop that file onto System Settings › Keyboard › Text Replacements and macOS expands them as you type. Clip for Mac itself never watches what you type.</p>
+
+<h2 id="macs">Your other Macs</h2>
+<p><strong>Pins through a folder.</strong> Settings › History › Pins on other Macs: choose a folder that iCloud Drive, Dropbox or anything else already syncs. Clip for Mac writes a small checksummed JSON file of your pins there whenever they change and reads it when another Mac changed it. History never travels. <code>clipmac pins export</code>, <code>import</code> and <code>sync</code> do the same from the terminal.</p>
+<p><strong>Sharing on this network.</strong> Settings › Sharing. Turn it on on both Macs; each sees the other under Nearby. Press Pair on one, and both screens show a six-digit code. Press Pair on both only if the codes match; a code that differs means someone is in the middle. From then on pins and the last N text items are sent end-to-end encrypted whenever pins change and every few minutes. Items that look like secrets, images, files and anything from an excluded app are never sent. Remove a Mac from the Paired list to stop.</p>
 
 <h2 id="ask">Ask your clipboard</h2>
 <p>Off unless you turn it on in Settings › Assist. Three levels, each stricter about what leaves the Mac:</p>
@@ -94,6 +103,7 @@ clipmac forget #42 | --app com.example.thing | --sensitive
 clipmac wipe --yes                 clipmac status
 clipmac assist "what did I work on today" --local
 clipmac assist log                 clipmac selftest</pre>
+<p>The Shortcuts app has real actions when the app was built with Xcode available: Get Recent Clipboard Items, Search Clip for Mac, Copy Clipboard Item, Pause and Resume Capture, Open Clip for Mac. Items that look like secrets are left out unless the action asks for them.</p>
 <p>Scripts and Shortcuts can also drive the running app with URLs: <code>clipmac://open</code>, <code>clipmac://search?q=invoice</code>, <code>clipmac://paste/42</code>, <code>clipmac://copy/42?plain=1</code>, <code>clipmac://pause?minutes=30</code>, <code>clipmac://resume</code>, <code>clipmac://settings</code>. See <code>man clipmac</code>.</p>
 
 <h2 id="privacy">Privacy and storage</h2>

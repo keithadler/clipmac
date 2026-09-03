@@ -31,7 +31,8 @@ find "$PWD/Sources/ClipMac" -name '*.swift' > "$WORK/sources.txt"
 echo "$WORK/Intents.swiftconstvalues" > "$WORK/constvals.txt"
 OUT="$APP/Contents/Resources/Metadata.appintents"
 rm -rf "$OUT"
-"$PROC" --output "$OUT" --toolchain-dir "$TOOLCHAIN" --module-name ClipMac --sdk-root "$SDK" \
+# --output is the folder the processor creates Metadata.appintents inside.
+"$PROC" --output "$APP/Contents/Resources" --toolchain-dir "$TOOLCHAIN" --module-name ClipMac --sdk-root "$SDK" \
   --xcode-version "$XCODE_BUILD" --platform-family macOS --deployment-target 14.0 --target-triple arm64-apple-macos14.0 \
   --source-file-list "$WORK/sources.txt" --swift-const-vals-list "$WORK/constvals.txt" --force --quiet-warnings 2>&1 | tail -3 || true
 if [ -d "$OUT" ]; then echo "App Intents metadata: $OUT ($(ls "$OUT" | tr '\n' ' '))"; else echo "App Intents metadata: processor produced nothing"; fi
