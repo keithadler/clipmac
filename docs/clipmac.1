@@ -1,0 +1,48 @@
+.TH CLIPMAC 1 "September 2026" "Clip for Mac" "User Commands"
+.SH NAME
+clipmac \- clipboard history that refuses to capture secrets
+.SH SYNOPSIS
+.B clipmac
+.I command
+[\fIoptions\fR]
+.SH DESCRIPTION
+The command-line face of Clip for Mac. It reads the same history the app writes.
+Items are addressed by position (1 = newest) or by stable id written as #12.
+.SH COMMANDS
+.TP
+.B list [--limit N] [--pinned] [--json]
+Recent items.
+.TP
+.B get \fIitem\fR
+Print an item to stdout (image and file items print their bytes).
+.TP
+.B copy \fIitem\fR [--plain]
+Put an item back on the pasteboard.
+.TP
+.B search \fIquery\fR [--limit N] [--semantic] [--json]
+Full-text and substring search; --semantic adds on-device meaning matches.
+.TP
+.B pin \fIitem\fR [--keyword K] / unpin \fIitem\fR / snip \fIkeyword\fR / snippets [--export file.plist]
+Pinned snippets. --export writes a macOS Text Replacement list.
+.TP
+.B pause [10m|1h] / resume
+Pause capture; the menu bar icon shows the state.
+.TP
+.B forget \fIitem\fR | --app \fIbundle-id\fR | --sensitive
+Real deletion, no undo.
+.TP
+.B wipe --yes
+Delete everything, including pins.
+.TP
+.B assist "\fIquestion\fR" [--local | --cloud] [--last N | --today] [--yes] [--json]
+Ask about recent items. --local uses Apple's on-device model. --cloud prints the redacted payload
+and sends it only after confirmation (or --yes). \fBassist log\fR lists every cloud request.
+.TP
+.B status [--json]
+Counts, FileVault, permissions, hotkey.
+.SH EXIT STATUS
+0 fine, 1 warning, 2 problem, 64 usage error.
+.SH FILES
+~/Library/Application Support/Clip for Mac/history.db
+.SH SEE ALSO
+pbcopy(1), pbpaste(1)
