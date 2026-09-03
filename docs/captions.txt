@@ -1,0 +1,99 @@
+POST CAPTIONS WITH TAGS
+One per app. First line is the hook; keep it as the on-screen text or the first line of the caption. Tags are at the end so the caption reads as a sentence first. Swap #fyp for your usual reach tags.
+
+======================================================================
+ASK FOR MAC  (public)
+----------------------------------------------------------------------
+TikTok / Reels / Shorts caption:
+Free Mac app: ask your Mac a question, get the answer and the file it came from. "How much was the lease deposit?" It reads your PDFs, mail, notes and screenshots ON the Mac. Nothing uploads. Press ⌥ Space in any app. Link: keithadler.github.io
+#mac #macos #apple #macbook #freeapp #opensource #privacy #productivity #appleintelligence #macapps #techtok #fyp
+
+X post:
+Ask for Mac. Free, open source.
+Ask your Mac a question in your own words and get the answer with the file it came from, one click away. PDFs, Word, mail, notes, screenshots.
+Nothing leaves the Mac. On macOS 26 Apple's on-device model writes the answer with citations; without it, it quotes the sentence. When your files don't have the answer, it says so.
+https://github.com/keithadler/askmac
+#macOS #opensource #privacy #AppleIntelligence #indiedev
+
+======================================================================
+WATCH FOR MAC  (release first, then post)
+----------------------------------------------------------------------
+TikTok / Reels / Shorts caption:
+Free Mac app that shows which apps talk to which companies, by name. "Spotify: Spotify, Fastly, Google Cloud." "MeetingBot: Mixpanel, DoubleClick." One notification the first time an app talks to someone new. It watches, it never blocks, nothing leaves your Mac. Link: keithadler.github.io
+#mac #macos #privacy #cybersecurity #apple #macbook #freeapp #opensource #infosec #macapps #techtok #fyp
+
+X post:
+Watch for Mac. Free, open source.
+Which apps on your Mac talk to which companies, in plain names. What is new this week. Which apps carry advertising or analytics networks.
+It watches. It never blocks, needs no privileges, and nothing leaves the Mac. Pairs with Permissions for Mac: what an app may do, and what it does. Fleet report in one command.
+https://github.com/keithadler/watchmac
+#macOS #privacy #infosec #opensource #compliance
+
+======================================================================
+PERMISSIONS FOR MAC  (public)
+----------------------------------------------------------------------
+TikTok / Reels / Shorts caption:
+Free Mac app: every permission on your Mac on ONE screen, in plain English. Which apps can see your screen, hear your mic, read every file, and what changed since last week. It never changes a permission for an app you have. Link: keithadler.github.io
+#mac #macos #privacy #cybersecurity #apple #macbook #freeapp #opensource #screenrecording #macapps #techtok #fyp
+
+X post:
+Permissions for Mac. Free, open source.
+Every permission on your Mac on one screen, in plain English: camera, mic, screen, keyboard, files, and everything that starts without you. What each app can do, how it got it, and what changed since last week.
+It never changes a permission for an app you have. One click clears leftovers from apps you deleted. Fleet audit in one command.
+https://github.com/keithadler/permsmac
+#macOS #privacy #infosec #opensource #compliance
+
+======================================================================
+CLIP FOR MAC  (public)
+----------------------------------------------------------------------
+TikTok / Reels / Shorts caption:
+Free Mac app: a clipboard that remembers. Copy five things, paste them back one at a time, search everything you ever copied. It refuses to record passwords and never leaves your Mac. Link: keithadler.github.io
+#mac #macos #productivity #apple #macbook #freeapp #opensource #clipboard #macapps #workflow #techtok #fyp
+
+X post:
+Clip for Mac. Free, open source.
+A clipboard that remembers, and a stack: copy several things, paste them back in order, one at a time. Search everything you ever copied, pin the things you paste every day, OCR on screenshots.
+Refuses to record passwords. Stays on the Mac; sharing between your own Macs only, encrypted.
+https://github.com/keithadler/clipmac
+#macOS #productivity #opensource #indiedev
+
+======================================================================
+TIDY FOR MAC  (public)
+----------------------------------------------------------------------
+TikTok / Reels / Shorts caption:
+Free Mac app for the whole family: finds what is eating your disk and slowing your Mac down, explains each item, and only ever moves things to the Trash with an undo receipt. Nothing is deleted, ever. Link: keithadler.github.io
+#mac #macos #apple #macbook #freeapp #opensource #cleanup #storage #macapps #familytech #techtok #fyp
+
+X post:
+Tidy for Mac. Free, open source.
+Cleanup and speed for the whole family. Duplicates, caches, old installers, browser weight, what starts at login, all explained in plain words.
+Nothing is deleted, ever: everything goes to the Trash with an undoable receipt.
+https://github.com/keithadler/tidymac
+#macOS #opensource #family #indiedev
+
+======================================================================
+STASH FOR MAC  (public)
+----------------------------------------------------------------------
+TikTok / Reels / Shorts caption:
+Free Mac app: encrypted backup into storage you ALREADY have. The Google Drive that comes with Gmail, the OneDrive with 365, iCloud, Dropbox, a disk. Several at once, on a schedule. Your key is 24 words on a card, and the provider only ever sees scrambled data. Link: keithadler.github.io
+#mac #macos #backup #privacy #encryption #apple #macbook #freeapp #opensource #googledrive #techtok #fyp
+
+X post:
+Stash for Mac. Free, open source.
+Encrypted backup into storage you already have: Google Drive, OneDrive, iCloud, Dropbox, a disk, a NAS. Several destinations at once, on a schedule, with a weekly check that it can actually restore.
+The provider only ever sees ciphertext. Your key is 24 words on a card. No password, no server, no subscription.
+https://github.com/keithadler/stashmac
+#macOS #backup #privacy #encryption #opensource
+
+======================================================================
+THE FAMILY (one post for all)
+----------------------------------------------------------------------
+TikTok / Reels / Shorts caption:
+Six free Mac apps, one rule: each does one thing, says exactly what it touches, and never phones home. Clipboard, cleanup, encrypted backup, permissions, ask-your-files, and who your apps talk to. All at keithadler.github.io
+#mac #macos #apple #macbook #freeapps #opensource #privacy #macapps #productivity #techtok #fyp
+
+X post:
+Six small Mac apps. Free, open source, no accounts, nothing phones home.
+Clip (clipboard that remembers), Tidy (cleanup, nothing deleted), Stash (encrypted backup into storage you have), Permissions (every permission, plain English), Ask (ask your files), Watch (who your apps talk to).
+https://keithadler.github.io
+#macOS #opensource #privacy #indiedev
