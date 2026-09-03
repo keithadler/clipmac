@@ -66,7 +66,7 @@ struct WelcomeView: View {
             step("hand.raised", "Nothing leaves this Mac", "No account, no telemetry, no network. The optional \"ask your clipboard\" feature is off until you add your own API key, and even then you see every redacted payload before it is sent.")
             Spacer()
             HStack {
-                Button("Open Settings…") { done(); NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil) }.buttonStyle(.link)
+                Button("Open Settings…") { done(); SettingsOpener.open() }.buttonStyle(.link)
                 Spacer()
                 Button("Get started") { done() }.keyboardShortcut(.defaultAction)
             }

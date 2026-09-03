@@ -11,7 +11,6 @@ import AppKit
 @main
 struct ClipMacApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    @ObservedObject private var monitor = Monitor.shared
     @AppStorage("menuBarIcon", store: Prefs.defaults) private var menuBarIcon = true
 
     init() {
@@ -22,7 +21,7 @@ struct ClipMacApp: App {
         MenuBarExtra(isInserted: $menuBarIcon) {
             MenuBarContent()
         } label: {
-            Image(systemName: monitor.paused ? "pause.circle" : (monitor.secureInput ? "lock.doc" : "doc.on.clipboard"))
+            MenuBarLabel()
         }
 
         Settings { SettingsView() }
@@ -98,10 +97,30 @@ enum URLCommands {
         case "resume":
             Monitor.shared.resume()
         case "settings":
-            NSApp.activate()
-            NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+            SettingsOpener.open()
         default:
             NSSound.beep()
         }
+    }
+}
+
+/// SwiftUI's openSettings action only exists inside a view. The menu bar label is the one view that
+/// is always alive, so it hands the action to this holder for the URL scheme and the welcome window.
+@MainActor
+enum SettingsOpener {
+    static var action: OpenSettingsAction?
+    static func open() {
+        NSApp.activate()
+        if let action { action() } else { NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil) }
+    }
+}
+
+struct MenuBarLabel: View {
+    @ObservedObject private var monitor = Monitor.shared
+    @Environment(\.openSettings) private var openSettings
+    var body: some View {
+        Image(systemName: monitor.paused ? "pause.circle" : (monitor.secureInput ? "lock.doc" : "doc.on.clipboard"))
+            .onAppear { SettingsOpener.action = openSettings }
+            .accessibilityLabel(Text("Clip for Mac"))
     }
 }

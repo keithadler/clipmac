@@ -5,7 +5,6 @@ import AppKit
 
 struct MenuBarContent: View {
     @ObservedObject private var monitor = Monitor.shared
-    @Environment(\.openSettings) private var openSettings
     var body: some View {
         Button { PanelController.shared.toggle() } label: { Text("Open Clipboard    \(Hotkey.describe())") }
         if Hotkey.conflict { Text("Shortcut taken by another app. Change it in Settings.") }
@@ -27,7 +26,7 @@ struct MenuBarContent: View {
             .disabled(!((Prefs.onDeviceModel && Capabilities.onDeviceModelAvailable) || Prefs.cloudAssist))
         Button("Export Pins as Text Replacements…") { Snippets.exportWithDialog() }
         Divider()
-        Button("Settings…") { NSApp.activate(); openSettings() }.keyboardShortcut(",")
+        Button("Settings…") { SettingsOpener.open() }.keyboardShortcut(",")
         Menu("Help") {
             Button("Welcome Tour") { WelcomeController.shared.show() }
             Button("Clip for Mac Help") { NSWorkspace.shared.open(URL(string: "https://github.com/keithadler/clipmac#readme")!) }
