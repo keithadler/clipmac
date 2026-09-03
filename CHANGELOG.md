@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.1.0 — 2026-09-02
+## 1.0.0 — 2026-09-02
 
-First version. Private, pre-release.
+First release.
 
 - Capture with hard refusal rules: concealed and transient pasteboard types, secure input,
   excluded apps (pre-filled with password managers), size cap.

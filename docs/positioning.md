@@ -1,6 +1,6 @@
 # Clip for Mac: sell it, advertise it, or neither?
 
-Written 2026-09-02, at version 0.1.0, before any public release. Revisit when the facts change.
+Written 2026-09-02, at version 1.0.0, before any public release. Revisit when the facts change.
 
 ## The short answer
 
