@@ -27,6 +27,9 @@ let imgItem = NSPasteboardItem()
 imgItem.setData(png, forType: .png)
 pb.writeObjects([imgItem]); print("png written (\(png.count) bytes)"); settle()
 
-// File
+// File: a path that exists on every Mac, including a CI runner with no Clip installed. NSURL writes
+// file URLs the way Finder does.
 pb.clearContents()
-pb.writeObjects([URL(fileURLWithPath: "/Applications/Clip for Mac.app") as NSURL]); print("file url written"); settle()
+let fileURL = URL(fileURLWithPath: "/System/Library/CoreServices/Finder.app")
+let wrote = pb.writeObjects([fileURL as NSURL])
+print("file url written: \(wrote) types=\(pb.types?.map(\.rawValue) ?? [])"); settle()

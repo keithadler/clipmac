@@ -38,7 +38,12 @@ pgrep -q -x ClipMac || { echo "app did not start"; exit 2; }
 # has happened.
 SETTLE=1.6
 fail=0
-check() { if eval "$2"; then echo "ok    $1"; else echo "FAIL  $1"; fail=1; fi; }
+check() {
+  if eval "$2"; then echo "ok    $1"; else
+    echo "FAIL  $1"; fail=1
+    echo "      latest items:"; "$BIN" list --limit 3 --json 2>&1 | grep -E '"kind"|"preview"' | sed 's/^/      /'
+  fi
+}
 copy() { printf '%s' "$1" | pbcopy; sleep "$SETTLE"; }
 
 copy "integration alpha $$"
@@ -49,7 +54,7 @@ copy "export ANTHROPIC_API_KEY=sk-ant-api03-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
 check "flags secrets"                  '"$BIN" list --limit 1 --json | grep -q "\"sensitive\" : true"'
 swift tests/concealed.swift >/dev/null 2>&1; sleep "$SETTLE"
 check "skips concealed pasteboards"    '! "$BIN" list --json | grep -q hunter2'
-CLIPMAC_SETTLE="$SETTLE" swift tests/richcontent.swift >/dev/null 2>&1; sleep "$SETTLE"
+CLIPMAC_SETTLE="$SETTLE" swift tests/richcontent.swift 2>&1 | sed "s/^/      richcontent: /"; sleep "$SETTLE"
 check "captures rtf"                   '"$BIN" list --json | grep -q "\"kind\" : \"rtf\""'
 check "captures images"                '"$BIN" list --json | grep -q "\"kind\" : \"image\""'
 check "captures file urls"             '"$BIN" list --json | grep -q "\"kind\" : \"file\""'
