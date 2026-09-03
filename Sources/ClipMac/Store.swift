@@ -486,6 +486,17 @@ enum Prefs {
         return cloudProvider == "openai" ? "gpt-5" : "claude-opus-5"
     }
 
+    // Updates (opt-in daily check)
+    static var autoUpdateCheck: Bool { defaults.bool(forKey: "autoUpdateCheck") }
+    static var lastUpdateCheck: Date? {
+        get { let t = defaults.double(forKey: "lastUpdateCheck"); return t > 0 ? Date(timeIntervalSince1970: t) : nil }
+        set { defaults.set(newValue?.timeIntervalSince1970 ?? 0, forKey: "lastUpdateCheck") }
+    }
+    static var skippedVersion: String? {
+        get { defaults.string(forKey: "skippedVersion") }
+        set { defaults.set(newValue, forKey: "skippedVersion") }
+    }
+
     // Hotkey
     static var hotkeyCode: Int { defaults.object(forKey: "hotkeyCode") as? Int ?? 9 }          // kVK_ANSI_V
     static var hotkeyModifiers: Int { defaults.object(forKey: "hotkeyModifiers") as? Int ?? 0x0900 } // cmd + option (Carbon)

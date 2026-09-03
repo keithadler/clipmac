@@ -177,3 +177,15 @@
 "Pause Capture for 1 Hour" = "Pausar captura 1 hora";
 "Pause Capture Until Resumed" = "Pausar captura hasta reanudar";
 "just now" = "ahora mismo";
+"Updates" = "Actualizaciones";
+"Check for updates once a day" = "Buscar actualizaciones una vez al día";
+"Check for updates once a day (one request to GitHub, no identifiers)" = "Buscar actualizaciones una vez al día (una petición a GitHub, sin identificadores)";
+"One request to GitHub's releases API, with no identifiers. When a newer version exists the menu bar icon fills in and offers the download; nothing is downloaded or installed by itself." = "Una petición a la API de versiones de GitHub, sin identificadores. Cuando hay una versión más nueva, el icono de la barra de menús se rellena y ofrece la descarga; nada se descarga ni se instala solo.";
+"Check Now" = "Buscar ahora";
+"%@ is available" = "%@ está disponible";
+"Last checked %@" = "Última comprobación: %@";
+"Never checked" = "Nunca comprobado";
+"Skipping %@" = "Omitiendo %@";
+"Stop Skipping" = "Dejar de omitir";
+"Update to Clip for Mac %@…" = "Actualizar a Clip for Mac %@…";
+"Skip This Version" = "Omitir esta versión";

@@ -35,8 +35,10 @@ when FileVault is off. If you share a Mac account with someone, they can read yo
 
 ## What leaves the Mac
 
-Nothing, by default. There is no account, no telemetry, no crash reporting, no analytics, and no
-update check unless you click "Check for Updates…" (one request to GitHub with no identifiers).
+Nothing, by default. There is no account, no telemetry, no crash reporting, and no analytics.
+Update checks happen only when you click "Check for Updates…" or turn on the optional daily check
+in Settings › General: either way it is one request to GitHub's releases API with no identifiers,
+and nothing is ever downloaded or installed by itself.
 
 The optional "ask your clipboard" feature has three levels:
 

@@ -30,6 +30,7 @@ enum CLI {
       clipmac assist "<question>" [--local | --cloud] [--last N | --today] [--yes] [--json]
       clipmac assist log [--json]
       clipmac status [--json]
+      clipmac update [--json]           check GitHub for a newer version; exit 1 when one exists
       clipmac selftest [--filter S] [--list] [--json]   run the built-in test suites (no Xcode needed)
       clipmac screenshots <dir> [--announce]   render every window and the promo cards from demo data;
                                         --announce copies them with the page and post drafts to the Desktop
@@ -210,6 +211,7 @@ enum CLI {
                 "on_device_model": Capabilities.onDeviceModelAvailable, "cloud_assist": Prefs.cloudAssist,
                 "hotkey": Hotkey.describe(), "database": Store.dbURL.path, "excluded_apps": Prefs.excludedBundleIDs,
                 "login_item": loginItemState,
+                "update_check": Prefs.autoUpdateCheck, "last_update_check": Prefs.lastUpdateCheck.map { Dump.iso.string(from: $0) } as Any,
             ]
             if json { print(Dump.json(info)); return fv == false ? 1 : 0 }
             print("""
@@ -224,11 +226,31 @@ enum CLI {
             cloud AI:       \(Prefs.cloudAssist ? "on (\(Prefs.cloudProvider), \(Prefs.cloudModel))" : "off")
             excluded apps:  \(Prefs.excludedBundleIDs.count)
             login item:     \(loginItemState)
+            update check:   \(Prefs.autoUpdateCheck ? "daily" : "manual only")\(Prefs.lastUpdateCheck.map { " (last \(Dump.relative($0)))" } ?? "")
             """)
             return fv == false ? 1 : 0
 
         case "assist":
             return assist(args, json: json)
+
+        case "update":
+            let sem = DispatchSemaphore(value: 0)
+            nonisolated(unsafe) var result: Updates.Result = .unknown("cancelled")
+            Task.detached { result = await Updates.check(); sem.signal() }
+            sem.wait()
+            Prefs.lastUpdateCheck = Date()
+            switch result {
+            case .upToDate(let v):
+                print(json ? Dump.json(["current": Capabilities.appVersion, "latest": v, "available": false]) : "Clip for Mac \(Capabilities.appVersion) is the latest version.")
+                return 0
+            case .available(let v, let url):
+                print(json ? Dump.json(["current": Capabilities.appVersion, "latest": v, "available": true, "url": url.absoluteString])
+                           : "Clip for Mac \(v) is available (you have \(Capabilities.appVersion)): \(url.absoluteString)")
+                return 1
+            case .unknown(let why):
+                if json { print(Dump.json(["current": Capabilities.appVersion, "error": why])) } else { fputs("couldn't check: \(why)\n", stderr) }
+                return 2
+            }
 
         case "screenshots":
             guard let dir = pos.first else { fputs("screenshots needs a directory\n", stderr); return 64 }

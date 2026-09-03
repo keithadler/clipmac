@@ -19,7 +19,8 @@ First version. Private, pre-release.
 - Assist: on-device semantic search; Apple on-device model (macOS 26); bring-your-own-key
   with visible redacted payload, per-request confirmation, and a request log.
 - `clipmac` CLI with `--json` everywhere; `clipmac://` URL scheme for Shortcuts and scripts.
-- First-launch welcome, About, Check for Updates, Help menu, login item.
+- First-launch welcome, About, Help menu, login item. Updates: manual check, or an opt-in daily
+  check that surfaces a newer release in the menu bar (nothing installs itself); `clipmac update`.
 - Bundled help (English and Spanish) with a keyboard reference; `clipmac screenshots` renders every
   window with demo data in dark and light for the README.
 - Search by meaning uses averaged word embeddings (measured far better than the sentence model on

@@ -98,7 +98,9 @@ clipmac assist log                 clipmac selftest</pre>
 
 <h2 id="privacy">Privacidad y almacenamiento</h2>
 <p>El historial está en <code>~/Library/Application Support/Clip for Mac/history.db</code>, con las imágenes y el texto enriquecido en una carpeta <code>blobs</code> al lado. Por defecto: 30 días, 2.000 elementos, 1 GB; los fijados están exentos; borrar es borrar de verdad. «Solo la sesión» en Ajustes › Historial lo mantiene todo en memoria.</p>
-<p><strong>Clip for Mac no cifra la base de datos por sí mismo.</strong> La búsqueda no puede indexar texto cifrado, y un cifrado a medias prometería más de lo que da. Se apoya en FileVault y te avisa cuando FileVault está desactivado. Sin cuenta, sin telemetría, sin red salvo que añadas tu propia clave o pulses «Buscar actualizaciones».</p>
+<p><strong>Clip for Mac no cifra la base de datos por sí mismo.</strong> La búsqueda no puede indexar texto cifrado, y un cifrado a medias prometería más de lo que da. Se apoya en FileVault y te avisa cuando FileVault está desactivado. Sin cuenta, sin telemetría, sin red salvo que añadas tu propia clave, pulses «Buscar actualizaciones» o actives la comprobación diaria opcional (una petición a GitHub, sin identificadores, nada se instala solo).</p>
+<h3>Actualizaciones</h3>
+<p>Desactivadas por defecto. Ajustes › General › «Buscar actualizaciones una vez al día» hace una petición a la API de versiones de GitHub. Cuando hay una versión más nueva, el icono de la barra de menús se rellena y ofrece «Actualizar a Clip for Mac x.y.z…», que abre la página de descarga; la instalas como la primera vez. «Omitir esta versión» silencia esa versión. <code>clipmac update</code> hace lo mismo desde un script y devuelve 1 cuando hay una actualización.</p>
 
 <h2 id="trouble">Solución de problemas</h2>
 <h3>El panel no se abre</h3>

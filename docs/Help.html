@@ -98,7 +98,9 @@ clipmac assist log                 clipmac selftest</pre>
 
 <h2 id="privacy">Privacy and storage</h2>
 <p>History lives in <code>~/Library/Application Support/Clip for Mac/history.db</code> with images and rich text in a <code>blobs</code> folder beside it. Defaults: 30 days, 2,000 items, 1 GB; pinned items are exempt; deleting is real deletion. "Session only" in Settings › History keeps everything in memory instead.</p>
-<p><strong>Clip for Mac does not encrypt the database itself.</strong> Search can't index ciphertext, and half-encryption would imply more than it delivers. It relies on FileVault and warns you when FileVault is off. No account, no telemetry, no network unless you add your own key or click Check for Updates.</p>
+<p><strong>Clip for Mac does not encrypt the database itself.</strong> Search can't index ciphertext, and half-encryption would imply more than it delivers. It relies on FileVault and warns you when FileVault is off. No account, no telemetry, no network unless you add your own key, click Check for Updates, or turn on the optional daily update check (one request to GitHub, no identifiers, nothing installed by itself).</p>
+<h3>Updates</h3>
+<p>Off by default. Settings › General › "Check for updates once a day" makes one request to GitHub's releases API. When a newer version exists the menu bar icon fills in and offers "Update to Clip for Mac x.y.z…", which opens the download page; you install it like the first time. "Skip This Version" silences that release. <code>clipmac update</code> does the same from a script and exits 1 when an update exists.</p>
 
 <h2 id="trouble">Troubleshooting</h2>
 <h3>The panel doesn't open</h3>

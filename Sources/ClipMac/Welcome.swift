@@ -36,6 +36,7 @@ struct WelcomeView: View {
     let done: () -> Void
     @State private var trusted = Capabilities.accessibilityTrusted
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
+    @AppStorage("autoUpdateCheck", store: Prefs.defaults) private var autoUpdate = false
     private let tick = Timer.publish(every: 1.5, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -67,6 +68,8 @@ struct WelcomeView: View {
                 }
                 .padding(.leading, 34)
             step("hand.raised", "Nothing leaves this Mac", "No account, no telemetry, no network. The optional \"ask your clipboard\" feature is off until you add your own API key, and even then you see every redacted payload before it is sent.")
+            Toggle("Check for updates once a day (one request to GitHub, no identifiers)", isOn: $autoUpdate)
+                .padding(.leading, 34)
             Spacer()
             HStack {
                 Button("Open Settings…") { done(); SettingsOpener.open() }.buttonStyle(.link)

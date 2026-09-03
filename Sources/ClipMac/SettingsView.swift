@@ -25,6 +25,8 @@ struct GeneralTab: View {
     @AppStorage("menuBarIcon", store: Prefs.defaults) private var menuBarIcon = true
     @State private var plainOn = Hotkey.Kind.plainPaste.enabled
     @State private var nextOn = Hotkey.Kind.pasteNext.enabled
+    @AppStorage("autoUpdateCheck", store: Prefs.defaults) private var autoUpdate = false
+    @ObservedObject private var updates = UpdateState.shared
 
     var body: some View {
         Form {
@@ -43,8 +45,28 @@ struct GeneralTab: View {
                 Toggle("Show the menu bar icon", isOn: $menuBarIcon)
                 if !menuBarIcon { Text("With the icon hidden, the shortcut and `clipmac` are the only ways in.").font(.caption).foregroundStyle(.secondary) }
             }
+            Section("Updates") {
+                Toggle("Check for updates once a day", isOn: $autoUpdate)
+                    .onChange(of: autoUpdate) { _, on in if on { Task { await Updates.checkIfDue() } } }
+                Text("One request to GitHub's releases API, with no identifiers. When a newer version exists the menu bar icon fills in and offers the download; nothing is downloaded or installed by itself.")
+                    .font(.caption).foregroundStyle(.secondary)
+                HStack {
+                    Button("Check Now") { Updates.checkAndPresent() }.disabled(updates.checking)
+                    if updates.checking { ProgressView().controlSize(.small) }
+                    Spacer()
+                    if let (v, _) = updates.available { Text(String(format: String(localized: "%@ is available"), v)).font(.caption).foregroundStyle(Color.accentColor) }
+                    else if let d = updates.lastChecked { Text(String(format: String(localized: "Last checked %@"), d.formatted(date: .abbreviated, time: .shortened))).font(.caption).foregroundStyle(.secondary) }
+                    else { Text("Never checked").font(.caption).foregroundStyle(.secondary) }
+                }
+                if let skipped = Prefs.skippedVersion {
+                    HStack {
+                        Text(String(format: String(localized: "Skipping %@"), skipped)).font(.caption).foregroundStyle(.secondary)
+                        Button("Stop Skipping") { Prefs.skippedVersion = nil; Task { await Updates.runCheck(quiet: true) } }.font(.caption)
+                    }
+                }
+            }
             Section {
-                Text("Clip for Mac \(Capabilities.appVersion) · MIT licensed · no account, no telemetry, no network unless you add a key.").font(.caption).foregroundStyle(.secondary)
+                Text("Clip for Mac \(Capabilities.appVersion) · MIT licensed · no account, no telemetry, no network unless you add a key or turn on the update check.").font(.caption).foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)

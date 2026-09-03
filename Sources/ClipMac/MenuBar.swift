@@ -9,7 +9,13 @@ import AppKit
 struct MenuBarContent: View {
     @ObservedObject private var monitor = Monitor.shared
     @ObservedObject private var stack = PasteStack.shared
+    @ObservedObject private var updates = UpdateState.shared
     var body: some View {
+        if let (v, url) = updates.available {
+            Button { NSWorkspace.shared.open(url) } label: { Text(String(format: String(localized: "Update to Clip for Mac %@…"), v)) }
+            Button("Skip This Version") { Updates.skip(v) }
+            Divider()
+        }
         Button { PanelController.shared.toggle() } label: { Text("Open Clipboard    \(Hotkey.describe())") }
         if Hotkey.conflict { Text("Shortcut taken by another app. Change it in Settings.") }
         Button { Paster.pasteCurrentAsPlain() } label: { Text("Paste as Plain Text    \(Hotkey.describe(.plainPaste))") }

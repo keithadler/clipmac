@@ -37,6 +37,9 @@ them all.
   queued item, so you can collect five things and paste them into five fields in a row. All
   three shortcuts are configurable in Settings › General.
 - **Pause** from the menu bar or `clipmac pause 30m`. The icon shows the state.
+- **Updates** are never automatic. "Check for Updates…" asks GitHub once; Settings › General can
+  turn on a daily check that fills in the menu bar icon when a newer release exists and opens the
+  download. Nothing is downloaded or installed by itself, and no identifiers are sent.
 - Search matches words (full-text), fragments (substring) and, with the default on-device
   word embeddings, *meaning*: "unpaid bill" finds the invoice without the word.
 
@@ -85,6 +88,7 @@ clipmac assist "what did I work on today" --local
 clipmac assist "group these by project" --cloud --last 20
 clipmac assist log --json
 clipmac status
+clipmac update                     # exit 1 when a newer release exists
 ```
 
 Exit codes: 0 fine, 1 warning, 2 problem, 64 usage error. `man clipmac` after `--install`.

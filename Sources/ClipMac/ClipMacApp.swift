@@ -55,6 +55,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             DispatchQueue.global(qos: .utility).async { Store.shared.enforceRetention() }
         }
         if WelcomeController.shouldShow { WelcomeController.shared.show() }
+        Updates.scheduleBackgroundChecks()
     }
 
     /// clipmac://open, clipmac://search?q=…, clipmac://paste/<id or position>[?plain=1], clipmac://copy/<id>,
@@ -146,9 +147,10 @@ enum SettingsOpener {
 
 struct MenuBarLabel: View {
     @ObservedObject private var monitor = Monitor.shared
+    @ObservedObject private var updates = UpdateState.shared
     @Environment(\.openSettings) private var openSettings
     var body: some View {
-        Image(systemName: monitor.paused ? "pause.circle" : (monitor.secureInput ? "lock.doc" : "doc.on.clipboard"))
+        Image(systemName: updates.available != nil ? "doc.on.clipboard.fill" : (monitor.paused ? "pause.circle" : (monitor.secureInput ? "lock.doc" : "doc.on.clipboard")))
             .onAppear { SettingsOpener.action = openSettings }
             .accessibilityLabel(Text("Clip for Mac"))
     }

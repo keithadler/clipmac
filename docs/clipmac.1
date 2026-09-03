@@ -39,7 +39,10 @@ Ask about recent items. --local uses Apple's on-device model. --cloud prints the
 and sends it only after confirmation (or --yes). \fBassist log\fR lists every cloud request.
 .TP
 .B status [--json]
-Counts, FileVault, permissions, hotkey.
+Counts, FileVault, permissions, hotkey, update-check state.
+.TP
+.B update [--json]
+Ask GitHub for the latest release. Exit 1 when a newer version exists, 2 when the check failed.
 .SH EXIT STATUS
 0 fine, 1 warning, 2 problem, 64 usage error.
 .SH FILES
