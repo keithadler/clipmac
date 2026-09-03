@@ -29,4 +29,5 @@ final class SuiteTests: XCTestCase {
     @MainActor func testProperties() { runSuite("Properties") }
     @MainActor func testUpdates() { runSuite("Updates") }
     @MainActor func testTransform() { runSuite("Transform") }
+    @MainActor func testSharing() { runSuite("Sharing") }
 }

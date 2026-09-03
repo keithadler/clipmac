@@ -13,6 +13,7 @@ struct SettingsView: View {
             HistoryTab().tabItem { Label("History", systemImage: "clock.arrow.circlepath") }
             PasteTab().tabItem { Label("Paste", systemImage: "keyboard") }
             AssistTab().tabItem { Label("Assist", systemImage: "sparkles") }
+            SharingTab().tabItem { Label("Sharing", systemImage: "laptopcomputer.and.iphone") }
         }
         .frame(width: 560, height: 480)
     }
@@ -410,4 +411,73 @@ struct AssistTab: View {
     }
 
     private func load() { hasKey = Assist.apiKey(for: prov) != nil; log = Store.shared.assistLog(limit: 20) }
+}
+
+
+// MARK: - Sharing
+
+struct SharingTab: View {
+    @ObservedObject private var sharing = Sharing.shared
+    @AppStorage("sharingEnabled", store: Prefs.defaults) private var enabled = false
+    @AppStorage("shareRecentCount", store: Prefs.defaults) private var recent = 20
+    @State private var name = ShareKeys.deviceName
+
+    var body: some View {
+        Form {
+            Section("Your other Macs") {
+                Toggle("Share with my other Macs on this network", isOn: $enabled)
+                    .onChange(of: enabled) { _, on in Sharing.shared.setEnabled(on) }
+                Text("No server and no account: the other Mac is found with Bonjour, you compare a six-digit code on both screens once, and from then on pins and recent text travel end-to-end encrypted. Items that look like secrets, images, files and anything from an excluded app never leave this Mac.")
+                    .font(.caption).foregroundStyle(.secondary)
+                HStack {
+                    TextField("This Mac's name", text: $name).onSubmit { ShareKeys.deviceName = name; if enabled { Sharing.shared.stop(); Sharing.shared.start() } }
+                    Stepper(value: $recent, in: 0...200, step: 5) { Text(String(format: String(localized: "and the last %lld text items"), recent)) }
+                }
+                if let e = sharing.lastError { Text(e).font(.caption).foregroundStyle(.red) }
+            }
+            if enabled {
+                Section("Nearby") {
+                    if sharing.nearby.isEmpty { Text("Looking for Macs running Clip for Mac with sharing on…").font(.caption).foregroundStyle(.secondary) }
+                    ForEach(sharing.nearby) { peer in
+                        HStack {
+                            Image(systemName: "laptopcomputer")
+                            Text(peer.name)
+                            Spacer()
+                            if sharing.paired.contains(where: { $0.id == peer.id }) { Text("Paired").font(.caption).foregroundStyle(.secondary) }
+                            else { Button("Pair…") { Sharing.shared.pair(with: peer) } }
+                        }
+                    }
+                }
+                Section("Paired") {
+                    if sharing.paired.isEmpty { Text("No paired Macs yet.").font(.caption).foregroundStyle(.secondary) }
+                    ForEach(sharing.paired) { d in
+                        HStack {
+                            Text(d.name)
+                            Text(d.pairedAt.formatted(date: .abbreviated, time: .omitted)).font(.caption).foregroundStyle(.secondary)
+                            Spacer()
+                            Button("Remove") { Sharing.shared.unpair(d) }
+                        }
+                    }
+                    if let t = sharing.lastSync { Text(String(format: String(localized: "Last exchange %@"), Dump.relative(t))).font(.caption).foregroundStyle(.secondary) }
+                    Button("Send Now") { Sharing.shared.pushToPaired() }.disabled(sharing.paired.isEmpty)
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .sheet(isPresented: Binding(get: { sharing.pairing != nil }, set: { if !$0 { Sharing.shared.cancelPairing() } })) {
+            if let p = sharing.pairing {
+                VStack(spacing: 16) {
+                    Text(String(format: String(localized: "Pair with %@"), p.peerName)).font(.title2).bold()
+                    Text("Both Macs show a code. Press Pair on both only if the codes are the same.").multilineTextAlignment(.center).foregroundStyle(.secondary)
+                    Text(p.code).font(.system(size: 44, weight: .bold, design: .monospaced)).kerning(6)
+                    if p.confirmedHere && !p.confirmedThere { Text("Waiting for the other Mac…").font(.caption).foregroundStyle(.secondary) }
+                    HStack {
+                        Button("Cancel") { Sharing.shared.cancelPairing() }
+                        Button("Pair") { Sharing.shared.confirmPairing() }.keyboardShortcut(.defaultAction).disabled(p.confirmedHere)
+                    }
+                }
+                .padding(28).frame(width: 380)
+            }
+        }
+    }
 }

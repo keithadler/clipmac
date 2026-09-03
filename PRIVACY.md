@@ -6,8 +6,10 @@ exactly what, where, and what ever leaves your Mac.
 ## What is stored
 
 Every clipboard change that passes the capture rules: the text, the rich text or HTML source,
-the image bytes, or the file paths; the name and bundle id of the app that was frontmost; the
-time; how often you pasted it back. Nothing else. No keystrokes, no window titles, no screenshots.
+the image bytes, or the file paths; the name and bundle id of the app that was frontmost; when
+Accessibility is granted and the option is on, the title of its front window; the time; how
+often you pasted it back. Text recognised in images (on-device, Vision) is stored as the item's
+searchable text. Nothing else. No keystrokes, no screenshots of your screen.
 
 ## What is never stored
 
@@ -32,6 +34,15 @@ Clip for Mac does **not** encrypt the database itself. Full-text search cannot i
 and half-encryption would imply more than it delivers. The history is protected by FileVault
 like the rest of your home folder. The app warns in Settings › History and in `clipmac status`
 when FileVault is off. If you share a Mac account with someone, they can read your history.
+
+## Sharing between your own Macs
+
+Off by default. When on, the other Mac is found with Bonjour on the local network, a six-digit
+code derived from a Curve25519 key exchange is shown on both screens, and only after you press
+Pair on both does anything travel. Payloads are sealed with ChaChaPoly using a key that never
+leaves the two Macs' Keychains. Only pins and the last N text-like items travel; items that look
+like secrets, images, files, and anything from an excluded app are never sent. Pins can also
+travel as a checksummed JSON file through any folder you already sync; history never does.
 
 ## What leaves the Mac
 

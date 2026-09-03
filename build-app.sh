@@ -44,6 +44,8 @@ if [ -f AppIcon.icns ]; then
   cp AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
   /usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string AppIcon" "$APP/Contents/Info.plist" >/dev/null 2>&1 || true
 fi
+# Shortcuts actions need Metadata.appintents, which only Xcode's processor can write (skipped without Xcode).
+./make-appintents.sh "$APP"
 # Help page and privacy statement travel inside the bundle so Help works offline and before the repo is public.
 cp docs/Help.html "$APP/Contents/Resources/Help.html"
 cp docs/Help.es.html "$APP/Contents/Resources/Help.es.html"

@@ -25,4 +25,8 @@ First version. Private, pre-release.
   window with demo data in dark and light for the README.
 - Search by meaning uses averaged word embeddings (measured far better than the sentence model on
   clipboard text); card-number detection is group-aware.
+- Paste transforms (⌥↩ clean, Paste As menu), paste-all from the stack, duplicate-aware
+  history with ×N counts, window titles when Accessibility allows, skip toast, Vision OCR
+  for screenshots, pins export/import and folder sync, local-network sharing paired by code
+  and end-to-end encrypted, Shortcuts actions (metadata via make-appintents.sh with Xcode).
 - English and Spanish. Universal binary, macOS 14+.

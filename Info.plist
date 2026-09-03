@@ -42,9 +42,15 @@
 	<string>14.0</string>
 	<key>LSUIElement</key>
 	<true/>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_clipmac._tcp</string>
+	</array>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Keith Adler</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Clip for Mac can share pins and recent copies with your other Macs on this network, only with Macs you pair by code.</string>
 </dict>
 </plist>

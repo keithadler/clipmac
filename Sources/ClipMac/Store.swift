@@ -502,6 +502,8 @@ enum Prefs {
     static var recordWindowTitles: Bool { defaults.object(forKey: "recordWindowTitles") as? Bool ?? true }
     static var skipToasts: Bool { defaults.object(forKey: "skipToasts") as? Bool ?? true }
     static var ocrImages: Bool { defaults.object(forKey: "ocrImages") as? Bool ?? true }
+    static var sharingEnabled: Bool { defaults.bool(forKey: "sharingEnabled") }
+    static var shareRecentCount: Int { let v = defaults.integer(forKey: "shareRecentCount"); return v > 0 ? v : 20 }
     static var syncFolder: String? {
         get { defaults.string(forKey: "syncFolder") }
         set { defaults.set(newValue, forKey: "syncFolder") }

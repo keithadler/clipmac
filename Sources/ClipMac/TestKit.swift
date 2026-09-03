@@ -44,7 +44,7 @@ struct TestSuite {
 enum TestKit {
     static var suites: [TestSuite] {
         [RedactorSuite.suite, RedactorSuite.regressions, StoreSuite.suite, CaptureSuite.suite, MonitorSuite.suite, PasterSuite.suite, PanelSuite.suite,
-         CLISuite.suite, AssistSuite.suite, CloudSuite.suite, UpdatesSuite.suite, TransformSuite.suite, MiscSuite.suite, PropertySuite.suite]
+         CLISuite.suite, AssistSuite.suite, CloudSuite.suite, UpdatesSuite.suite, TransformSuite.suite, SharingSuite.suite, MiscSuite.suite, PropertySuite.suite]
     }
 
     struct Result {

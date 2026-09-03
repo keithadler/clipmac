@@ -36,6 +36,16 @@ them all.
   the panel. **⇧↩** in the panel queues an item on the paste stack; **⌃⌥⌘V** pastes the next
   queued item, so you can collect five things and paste them into five fields in a row. All
   three shortcuts are configurable in Settings › General.
+- **⌥↩** pastes a cleaned copy: trimmed, with tracking parameters (`utm_*`, `fbclid`, `gclid`…)
+  stripped from any link. Right-click › **Paste As** offers lowercase, UPPERCASE, Title Case,
+  one line, Markdown link, pretty-printed JSON.
+- **Copies you make twice** (even with different whitespace) stay one item with a ×N count.
+  When Accessibility is granted, items remember the window they came from: "Safari · GitHub
+  issue #42", not just "Safari".
+- **Screenshots are searchable.** Text in captured images is read on-device with Vision and
+  becomes the item's searchable text.
+- **A one-line note** under the menu bar says why something was not saved ("Not saved: a
+  password field has focus"), so the rules never look like a lost copy.
 - **Pause** from the menu bar or `clipmac pause 30m`. The icon shows the state.
 - **Updates** are never automatic. "Check for Updates…" asks GitHub once; Settings › General can
   turn on a daily check that fills in the menu bar icon when a newer release exists and opens the
@@ -44,6 +54,18 @@ them all.
   word embeddings, *meaning*: "unpaid bill" finds the invoice without the word.
 
 <p align="center"><img src="docs/screenshots/welcome.png" width="420" alt="Welcome tour"> <img src="docs/screenshots/settings.png" width="420" alt="Settings › General with the three shortcuts"></p>
+
+### Your other Macs
+
+Two ways, neither with an account or a server:
+
+- **Pins through a folder.** Settings › History › Pins on other Macs: choose any folder that
+  iCloud Drive, Dropbox or a USB stick already syncs, and every Mac keeps its pins (never
+  history) in step through a small checksummed JSON file. `clipmac pins export|import|sync`.
+- **Sharing on the local network.** Settings › Sharing: Bonjour finds your other Mac, both
+  screens show the same six-digit code once, you press Pair on both, and from then on pins and
+  the last N text items travel end-to-end encrypted (Curve25519 + ChaChaPoly). Secrets, images,
+  files and excluded-app items never leave the machine. Off by default.
 
 ### Pasting: two honest modes
 
@@ -94,6 +116,12 @@ clipmac update                     # exit 1 when a newer release exists
 Exit codes: 0 fine, 1 warning, 2 problem, 64 usage error. `man clipmac` after `--install`.
 
 ## Shortcuts and scripts
+
+The Shortcuts app gets real actions when the app was built with Xcode available: Get Recent
+Clipboard Items, Search Clip for Mac, Copy Clipboard Item, Pause and Resume Capture, Open Clip
+for Mac. Items that look like secrets are left out unless the action asks for them.
+(`make-appintents.sh` writes the metadata Shortcuts needs; without Xcode the actions are simply
+absent and the URL scheme below still works.)
 
 The `clipmac://` URL scheme drives the running app, so a Shortcuts "Open URL" action or
 `open` from a script works without the CLI:
