@@ -6,6 +6,16 @@ leaving your Mac.
 
 Free, MIT licensed, no account, no telemetry. Same family as [Tidy for Mac](https://github.com/keithadler/tidymac).
 
+## Download
+
+**[Download Clip for Mac 1.0.0 (DMG, 2.7 MB)](https://github.com/keithadler/clipmac/releases/download/v1.0.0/Clip-for-Mac-1.0.0.dmg)** · macOS 14 or later, Apple silicon and Intel
+
+1. Open the downloaded file and drag **Clip for Mac** into **Applications**.
+2. Open it from Applications. macOS will say it can't check the app for malicious software: click **Done**, then **System Settings › Privacy & Security › Open Anyway**. That happens once, because this is a free app without Apple's $99-a-year certificate.
+3. Press **⌥⌘V**.
+
+Or build it yourself in a minute, no Xcode needed: `git clone https://github.com/keithadler/clipmac && cd clipmac && ./build-app.sh --install --run`
+
 <p align="center"><img src="docs/screenshots/panel.png" width="780" alt="The Clip for Mac panel: pinned snippet, history with ⌘-number badges, a flagged secret, preview pane"></p>
 <p align="center"><img src="docs/screenshots/panel-search.png" width="780" alt="Searching for money owed finds the invoice and the bill by meaning"><br><sub>"money owed" finds the invoice and the bill without either word, on-device.</sub></p>
 
