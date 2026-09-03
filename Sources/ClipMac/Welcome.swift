@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  First-launch welcome: the shortcut, the two paste modes, login item, and the privacy promise.
 //  Shown once, and again from the menu bar on request.
 

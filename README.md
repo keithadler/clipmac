@@ -162,6 +162,18 @@ Sources/ClipMac/
   SettingsView.swift, MenuBar.swift
 ```
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md): the seven ground rules that keep the app trustworthy, and
+how to add a capture rule, a CLI command, or a language.
+
 ## License
 
 MIT. See LICENSE.
+
+## Trademarks
+
+Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other countries. Clip for Mac
+is an independent open-source project and is not affiliated with, endorsed by, or sponsored by
+Apple. 1Password, Bitwarden, Raycast, Maccy, Paste and other names are trademarks of their
+respective owners and are used only to identify those products.

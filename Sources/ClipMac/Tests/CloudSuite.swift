@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 import Foundation
 
 /// Serves canned HTTP responses to Assist without touching the network or the Keychain.

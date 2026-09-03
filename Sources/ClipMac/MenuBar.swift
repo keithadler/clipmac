@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  Menu bar extra content and the "ask your clipboard" window.
 
 import SwiftUI

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clip for Mac</title>
+<meta name="description" content="A clipboard manager that refuses to capture secrets. Free, open source, MIT.">
+<style>
+  :root { color-scheme: light dark; --fg: #1d1d1f; --muted: #6e6e73; --bg: #fff; --card: #f5f5f7; --accent: #2f63d6; --line: #e5e5ea; }
+  @media (prefers-color-scheme: dark) { :root { --fg: #f5f5f7; --muted: #a1a1a6; --bg: #111; --card: #1c1c1e; --accent: #6ea0ff; --line: #333; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 17px/1.55 -apple-system, "SF Pro Text", Helvetica, Arial, sans-serif; color: var(--fg); background: var(--bg); }
+  header { background: linear-gradient(135deg, #1f4fc4, #4d8bf5); color: #fff; padding: 72px 24px 56px; text-align: center; }
+  header img.icon { width: 128px; height: 128px; border-radius: 28px; box-shadow: 0 12px 40px rgba(0,0,0,.35); }
+  header h1 { font-size: 52px; margin: 20px 0 8px; letter-spacing: -0.5px; }
+  header p.tag { font-size: 24px; margin: 0 0 28px; opacity: .95; }
+  .cta { display: inline-block; background: #fff; color: #1f4fc4; font-weight: 600; padding: 14px 26px; border-radius: 12px; text-decoration: none; margin: 0 6px; }
+  .cta.secondary { background: rgba(255,255,255,.18); color: #fff; }
+  main { max-width: 980px; margin: 0 auto; padding: 24px 24px 80px; }
+  .hero { margin: -40px auto 0; max-width: 980px; padding: 0 24px; }
+  .hero img { width: 100%; border-radius: 14px; box-shadow: 0 24px 60px rgba(0,0,0,.35); display: block; }
+  h2 { font-size: 30px; margin: 64px 0 16px; letter-spacing: -0.3px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+  .card { background: var(--card); border-radius: 14px; padding: 22px; }
+  .card h3 { margin: 0 0 8px; font-size: 19px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+  .rules { background: var(--card); border-radius: 14px; padding: 8px 26px; }
+  .rules li { margin: 12px 0; }
+  .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .shots img { width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+  pre { background: #0e1116; color: #d7e3d7; padding: 20px 22px; border-radius: 12px; overflow-x: auto; font: 14px/1.5 ui-monospace, "SF Mono", Menlo, monospace; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0 0; } td, th { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; } th { color: var(--muted); font-size: 14px; }
+  td.y { color: #1a9e4a; font-weight: 600; } td.n { color: var(--muted); }
+  footer { text-align: center; color: var(--muted); font-size: 14px; padding: 40px 24px; border-top: 1px solid var(--line); }
+  a { color: var(--accent); }
+  @media (max-width: 700px) { .shots { grid-template-columns: 1fr; } header h1 { font-size: 40px; } }
+</style>
+</head>
+<body>
+<header>
+  <img class="icon" src="../icon/ClipMac.iconset/icon_256x256.png" alt="">
+  <h1>Clip for Mac</h1>
+  <p class="tag">A clipboard manager that refuses to capture secrets.</p>
+  <a class="cta" href="https://github.com/keithadler/clipmac/releases/latest">Download for macOS 14+</a>
+  <a class="cta secondary" href="https://github.com/keithadler/clipmac">Source on GitHub</a>
+  <p style="margin:18px 0 0;font-size:14px;opacity:.85">Free · open source · MIT · no account · no telemetry · universal binary</p>
+</header>
+
+<div class="hero"><img src="screenshots/panel.png" alt="The Clip for Mac panel"></div>
+
+<main>
+<h2>Why another clipboard manager</h2>
+<p>Every clipboard manager keeps a plain-text diary of everything you copy. That includes the password your password manager just put on the clipboard. Clip for Mac starts from the other end: the rules about what it will <em>not</em> keep are the product, and they have no off switch.</p>
+<ol class="rules">
+  <li><strong>Password managers are honored.</strong> Anything marked concealed or transient with the <code>org.nspasteboard</code> convention (1Password, Bitwarden, Keychain Access, Strongbox, KeePassXC and others) is skipped.</li>
+  <li><strong>Password fields are honored.</strong> Anything copied while macOS secure input is on is skipped, and the menu bar icon shows a lock while that is true.</li>
+  <li><strong>Excluded apps are honored.</strong> The list ships with the common password managers; add any app.</li>
+  <li><strong>Secrets that slip through are flagged</strong> with a shield: API keys, tokens, private keys, card numbers, <code>password=</code>. One command forgets them all.</li>
+</ol>
+
+<h2>What it does well</h2>
+<div class="grid">
+  <div class="card"><h3>⌥⌘V, anywhere</h3><p>The panel opens over what you're doing without stealing focus. Type, ↩ to paste, ⌘↩ for plain text, ⌘1–9 for the top nine, esc.</p></div>
+  <div class="card"><h3>Search by meaning</h3><p>"money owed" finds the invoice and the bill without either word. On-device word embeddings, no network, on by default.</p></div>
+  <div class="card"><h3>Paste stack</h3><p>Queue five things with ⇧↩, then ⌃⌥⌘V pastes them one after another into five fields. ⌥⇧⌘V pastes anything as plain text.</p></div>
+  <div class="card"><h3>Pins and snippets</h3><p>Pinned items never expire. Give one a keyword and <code>clipmac snip</code> prints it, or export pins as macOS Text Replacements.</p></div>
+  <div class="card"><h3>Ask your clipboard</h3><p>Apple's on-device model on macOS 26, or your own Anthropic or OpenAI key: you pick the items, see the redacted payload, confirm every request, and it is logged.</p></div>
+  <div class="card"><h3>A real command line</h3><p><code>clipmac</code> with <code>--json</code> everywhere, exit codes, a man page, and a <code>clipmac://</code> URL scheme for Shortcuts.</p></div>
+</div>
+
+<div class="shots" style="margin-top:28px">
+  <img src="screenshots/panel-search.png" alt="Search by meaning">
+  <img src="screenshots/welcome.png" alt="Welcome tour">
+</div>
+
+<h2>Honest about what leaves the Mac</h2>
+<p>Nothing, unless you add your own API key. No account, no telemetry, no crash reporting, no background update checks. The database is not encrypted by the app itself, because full-text search cannot index ciphertext; it relies on FileVault and tells you when FileVault is off. The whole privacy page fits on one screen: <a href="../PRIVACY.md">PRIVACY.md</a>.</p>
+
+<h2>Compared</h2>
+<table>
+<tr><th></th><th>Clip for Mac</th><th>Maccy</th><th>Raycast</th><th>Paste</th></tr>
+<tr><td>Honors password-manager concealed types</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td></tr>
+<tr><td>Skips secure-input (password field) copies</td><td class="y">Yes</td><td class="n">No</td><td class="n">No</td><td class="n">No</td></tr>
+<tr><td>Flags secret-shaped items, forget them in one go</td><td class="y">Yes</td><td class="n">No</td><td class="n">No</td><td class="n">No</td></tr>
+<tr><td>Search by meaning, on-device</td><td class="y">Yes</td><td class="n">No</td><td class="n">No</td><td class="n">No</td></tr>
+<tr><td>Redacts before any cloud request, shows the payload</td><td class="y">Yes</td><td class="n">n/a</td><td class="n">No</td><td class="n">No</td></tr>
+<tr><td>Paste stack</td><td class="y">Yes</td><td class="n">No</td><td class="n">No</td><td class="y">Yes</td></tr>
+<tr><td>Command line and URL scheme</td><td class="y">Yes</td><td class="n">No</td><td class="y">Partial</td><td class="n">No</td></tr>
+<tr><td>Price</td><td class="y">Free, MIT</td><td class="y">Free, MIT</td><td>Free tier</td><td>Subscription</td></tr>
+</table>
+<p style="color:var(--muted);font-size:14px">Comparison from each product's public documentation at the time of writing; corrections welcome.</p>
+
+<h2>Install</h2>
+<pre>brew install --cask clipmac        # once the cask is published
+
+# or: download the DMG from the releases page, drag to Applications, press ⌥⌘V
+# or build it yourself, no Xcode needed:
+git clone https://github.com/keithadler/clipmac && cd clipmac && ./build-app.sh --install --run</pre>
+<p>macOS 14 Sonoma or later, Apple silicon and Intel. The Accessibility permission is optional: it lets the app press ⌘V for you; without it, choosing an item copies and you paste.</p>
+
+<div class="shots">
+  <img src="screenshots/settings.png" alt="Settings">
+  <img src="screenshots/ask.png" alt="Ask your clipboard">
+</div>
+</main>
+<footer>Clip for Mac is MIT licensed. Mac and macOS are trademarks of Apple Inc. Other names belong to their owners and are used only to identify those products.</footer>
+</body>
+</html>

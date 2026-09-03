@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  Secret detection and masking. Shared by the capture path (to flag rows), the panel (to warn), and
 //  the cloud assist path (to mask before anything leaves the machine). Patterns are deliberately
 //  broad: a false positive costs a "[REDACTED]" in a summary, a false negative costs a leaked key.

@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  `clipmac screenshots <dir>`: renders every window with demo data into PNGs for the README, in
 //  dark and light appearance, without touching real history or needing any permission. The CLI
 //  process is the same binary, so it can put the windows on screen for a moment and capture them.
@@ -55,8 +58,43 @@ enum Screenshots {
             settle()
             if let w = AssistWindowController.shared.window { written.append(try capture(w, to: dir.appendingPathComponent("ask\(suffix).png"))); w.orderOut(nil) }
         }
+        written += Promo.render(into: dir, icon: app.applicationIconImage)
         app.setActivationPolicy(.accessory)
         return written
+    }
+
+    /// Copies the README screenshots, the promo cards, the announcement page and the post drafts
+    /// to ~/Desktop/Clip for Mac announcement, with paths rewritten so the page works standalone.
+    static func announce(from dir: URL) throws -> URL {
+        let fm = FileManager.default
+        let desk = fm.homeDirectoryForCurrentUser.appendingPathComponent("Desktop/Clip for Mac announcement", isDirectory: true)
+        try? fm.removeItem(at: desk)
+        try fm.createDirectory(at: desk.appendingPathComponent("screenshots"), withIntermediateDirectories: true)
+        try fm.createDirectory(at: desk.appendingPathComponent("promo"), withIntermediateDirectories: true)
+        for f in (try? fm.contentsOfDirectory(atPath: dir.path)) ?? [] where f.hasSuffix(".png") {
+            try fm.copyItem(at: dir.appendingPathComponent(f), to: desk.appendingPathComponent("screenshots/\(f)"))
+        }
+        for f in (try? fm.contentsOfDirectory(atPath: dir.appendingPathComponent("promo").path)) ?? [] where f.hasSuffix(".png") {
+            try fm.copyItem(at: dir.appendingPathComponent("promo/\(f)"), to: desk.appendingPathComponent("promo/\(f)"))
+        }
+        // The repo checkout holds docs/ and icon/; the screenshots dir is docs/screenshots.
+        let docs = dir.deletingLastPathComponent()
+        let repo = docs.deletingLastPathComponent()
+        if let icon = NSImage(contentsOf: repo.appendingPathComponent("icon/ClipMac.iconset/icon_256x256.png")),
+           let tiff = icon.tiffRepresentation, let png = NSBitmapImageRep(data: tiff)?.representation(using: .png, properties: [:]) {
+            try png.write(to: desk.appendingPathComponent("icon.png"))
+        } else if let png = NSBitmapImageRep(data: NSApp.applicationIconImage.tiffRepresentation ?? Data())?.representation(using: .png, properties: [:]) {
+            try png.write(to: desk.appendingPathComponent("icon.png"))
+        }
+        if var html = try? String(contentsOf: docs.appendingPathComponent("announcement.html"), encoding: .utf8) {
+            html = html.replacingOccurrences(of: "../icon/ClipMac.iconset/icon_256x256.png", with: "icon.png")
+                       .replacingOccurrences(of: "../PRIVACY.md", with: "https://github.com/keithadler/clipmac/blob/main/PRIVACY.md")
+            try html.write(to: desk.appendingPathComponent("announcement.html"), atomically: true, encoding: .utf8)
+        }
+        if fm.fileExists(atPath: docs.appendingPathComponent("post.txt").path) {
+            try fm.copyItem(at: docs.appendingPathComponent("post.txt"), to: desk.appendingPathComponent("post.txt"))
+        }
+        return desk
     }
 
     /// Lets SwiftUI lay out and the window server composite before capturing.

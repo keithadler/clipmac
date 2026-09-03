@@ -1,0 +1,38 @@
+Show HN: Clip for Mac – a clipboard manager that refuses to capture secrets
+https://github.com/keithadler/clipmac
+
+Every clipboard manager keeps a plain-text diary of what you copy, including the password
+your password manager just put on the clipboard. I built one that starts from what it won't
+keep: the org.nspasteboard concealed/transient convention, macOS secure input, an exclusion
+list, and a redactor that flags API keys, JWTs, private keys and card numbers. Those rules
+have no off switch.
+
+The rest is what you'd expect from a good one, plus a few things I wanted: on-device search
+by meaning ("money owed" finds the invoice), a paste stack, a global paste-as-plain-text
+shortcut, pins with keywords, and a real CLI with --json and a clipmac:// URL scheme for
+Shortcuts. Optional "ask your clipboard" with Apple's on-device model, or your own API key
+where you see the redacted payload before anything is sent and every request is logged.
+
+Swift, SwiftUI, SQLite with FTS5, no dependencies, no Xcode project. MIT. macOS 14+.
+Honest limits: the database isn't encrypted by the app (FTS can't index ciphertext); it
+relies on FileVault and warns when it's off. No account, no telemetry.
+
+---- X / Mastodon ----
+
+Clip for Mac: a clipboard manager that refuses to capture secrets.
+
+Honors password managers, skips password fields, flags keys and card numbers, searches by
+meaning on-device, paste stack, real CLI. No account, no telemetry. Free and MIT.
+
+github.com/keithadler/clipmac
+
+---- r/macapps ----
+
+Title: [Free, open source] Clip for Mac – clipboard history that refuses to capture secrets
+
+I got tired of clipboard managers quietly storing passwords, so I wrote one whose refusal
+rules can't be turned off: concealed/transient pasteboard types, secure input, excluded
+apps, plus a redactor that flags anything key-shaped. Also: search by meaning (on-device),
+paste stack, ⌥⇧⌘V paste-as-plain, pins, CLI with --json, Shortcuts URL scheme, optional
+"ask your clipboard" with Apple's on-device model or your own API key (redacted, confirmed,
+logged). Swift, no dependencies, MIT. Screenshots and download in the repo.

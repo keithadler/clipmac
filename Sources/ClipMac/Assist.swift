@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  The optional "ask your clipboard" layer. Three tiers, each stricter than the last about what
 //  leaves the machine:
 //

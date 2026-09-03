@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  A small test kit that runs in two places from one source: `clipmac selftest` (no Xcode needed)
 //  and the XCTest bridge in Tests/ClipMacTests (CI, or any Mac with Xcode). Every case runs with an
 //  isolated in-memory store and a throwaway defaults suite, so tests never touch real history.

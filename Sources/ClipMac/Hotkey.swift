@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  Global hotkeys through Carbon's RegisterEventHotKey. Works without Accessibility permission,
 //  reports a conflict when another app already owns the combination. Three of them:
 //  open the panel, paste the current clipboard as plain text, paste the next item off the stack.

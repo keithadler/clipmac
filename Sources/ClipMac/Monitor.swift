@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  Pasteboard polling and the capture rules. macOS has no change notification for the pasteboard,
 //  so every clipboard manager polls changeCount. 300 ms while someone is at the keyboard, 1 s when
 //  locked, on a coalescing DispatchSourceTimer.

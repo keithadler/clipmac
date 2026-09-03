@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  Putting an item back on the pasteboard, and optionally pasting it.
 //
 //  Two mechanisms, and the app is honest about which one it's using:

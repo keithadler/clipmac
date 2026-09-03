@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  What this Mac and this permission set allow. Every optional feature checks here before showing
 //  a control, so nothing in the UI is a dead button.
 

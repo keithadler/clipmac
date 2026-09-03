@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  Search field, result list, preview pane. Never renders HTML: it shows the source.
 
 import SwiftUI

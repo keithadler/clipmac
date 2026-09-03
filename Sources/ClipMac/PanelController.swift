@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  The floating panel. Non-activating, so the app that was frontmost stays active and the paste
 //  target never changes. Keyboard handling lives in a local event monitor rather than SwiftUI key
 //  handlers so ⌘-shortcuts work no matter which subview has focus.

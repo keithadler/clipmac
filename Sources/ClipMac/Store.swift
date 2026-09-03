@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  SQLite storage: history.db (WAL) with an FTS5 index over the plain-text projection, a side table
 //  of sentence-embedding vectors, the assist request log, and blob files for anything large.
 //

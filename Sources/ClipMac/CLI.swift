@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  The command-line face. The same binary that runs the app answers to `clipmac <command>` through
 //  the symlink build-app.sh --install creates. Commands read the same history.db the app writes
 //  (WAL mode handles the two processes) and exit before any UI exists.
@@ -28,7 +31,8 @@ enum CLI {
       clipmac assist log [--json]
       clipmac status [--json]
       clipmac selftest [--filter S] [--list] [--json]   run the built-in test suites (no Xcode needed)
-      clipmac screenshots <dir>         render every window with demo data (dark and light) for the README
+      clipmac screenshots <dir> [--announce]   render every window and the promo cards from demo data;
+                                        --announce copies them with the page and post drafts to the Desktop
       clipmac help | version
 
     ITEMS
@@ -229,8 +233,11 @@ enum CLI {
         case "screenshots":
             guard let dir = pos.first else { fputs("screenshots needs a directory\n", stderr); return 64 }
             do {
-                let files = try MainActor.assumeIsolated { try Screenshots.render(to: URL(fileURLWithPath: dir)) }
-                print(json ? Dump.json(["written": files.map(\.path)]) : files.map { "wrote \($0.path)" }.joined(separator: "\n"))
+                let out = URL(fileURLWithPath: dir)
+                let files = try MainActor.assumeIsolated { try Screenshots.render(to: out) }
+                var lines = files.map { "wrote \($0.path)" }
+                if flag("--announce", args) { lines.append("announcement kit: \(try Screenshots.announce(from: out).path)") }
+                print(json ? Dump.json(["written": files.map(\.path)]) : lines.joined(separator: "\n"))
                 return 0
             } catch { fputs("\(error.localizedDescription)\n", stderr); return 2 }
 

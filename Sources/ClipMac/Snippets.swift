@@ -1,3 +1,6 @@
+//  Clip for Mac — clipboard history that refuses to capture secrets.
+//  MIT licensed. See LICENSE.
+//
 //  Pinned items with keywords. Expansion is deliberately not keystroke interception: no input
 //  monitoring, no text-replacement engine of our own. Instead pinned items sit at the top of the
 //  panel, `clipmac snip <keyword>` serves scripts, and the pins can be exported as a macOS Text
