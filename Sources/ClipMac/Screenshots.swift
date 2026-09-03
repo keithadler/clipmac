@@ -112,10 +112,10 @@ enum Screenshots {
         func text(_ t: String, app: String = "com.apple.Notes", name: String = "Notes", kind: ItemKind = .text) {
             _ = s.insert(Capture(kind: kind, plain: t, blobData: nil, blobType: nil, sourceBundleID: app, sourceName: name, size: t.utf8.count))
         }
-        text("Keith Adler\nkeith@example.com", app: "com.apple.mail", name: "Mail")
+        text("Sam Rivera\nsam@example.com", app: "com.apple.mail", name: "Mail")
         let sig = s.item(atPosition: 1)!
         s.setPinned(sig.id, true, keyword: "sig")
-        text("/Users/keith/Documents/Woodland Ave lease.pdf", app: "com.apple.finder", name: "Finder", kind: .file)
+        text("/Users/sam/Documents/Woodland Ave lease.pdf", app: "com.apple.finder", name: "Finder", kind: .file)
         let img = NSImage(size: NSSize(width: 320, height: 200))
         img.lockFocus()
         NSGradient(colors: [NSColor.systemTeal, NSColor.systemIndigo])!.draw(in: NSRect(x: 0, y: 0, width: 320, height: 200), angle: 30)
