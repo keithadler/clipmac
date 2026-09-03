@@ -14,11 +14,18 @@ import CryptoKit
 private let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
 
 final class Store {
-    static let shared = Store()
+    /// Replaceable so tests can point everything at an in-memory store.
+    static var shared = Store()
 
+    /// CLIPMAC_HOME overrides the data directory (integration tests use a temporary one).
     static let supportDir: URL = {
-        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        let dir = base.appendingPathComponent("Clip for Mac", isDirectory: true)
+        let dir: URL
+        if let home = ProcessInfo.processInfo.environment["CLIPMAC_HOME"], !home.isEmpty {
+            dir = URL(fileURLWithPath: home, isDirectory: true)
+        } else {
+            let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            dir = base.appendingPathComponent("Clip for Mac", isDirectory: true)
+        }
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir
     }()
@@ -345,6 +352,11 @@ final class Store {
         exec("PRAGMA wal_checkpoint(TRUNCATE)")
     }
 
+    /// Test hook: moves a row back in time so retention can be exercised.
+    func backdate(_ id: Int64, to date: Date) {
+        run("UPDATE items SET created_at = ?, last_used_at = ? WHERE id = ?", [.real(date.timeIntervalSince1970), .real(date.timeIntervalSince1970), .int(id)])
+    }
+
     // MARK: - Retention
 
     /// Applies the age, count and size caps. Pinned items are exempt. Returns rows deleted.
@@ -423,7 +435,10 @@ final class Store {
 // MARK: - Settings (shared defaults so the CLI process and the app agree)
 
 enum Prefs {
-    static let defaults = UserDefaults(suiteName: "com.keithadler.clipmac.shared") ?? .standard
+    static var defaults: UserDefaults = {
+        let suite = ProcessInfo.processInfo.environment["CLIPMAC_HOME"] == nil ? "com.keithadler.clipmac.shared" : "com.keithadler.clipmac.test"
+        return UserDefaults(suiteName: suite) ?? .standard
+    }()
 
     static var sessionOnly: Bool { defaults.bool(forKey: "sessionOnly") }
     static var retentionDays: Int { let v = defaults.integer(forKey: "retentionDays"); return v > 0 ? v : 30 }

@@ -10,15 +10,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Swift version
         run: swift --version
-      - name: Unit tests (XCTest, needs Xcode on the runner)
+      - name: Unit suites via XCTest
         run: swift test
       - name: Build universal app
         run: ./build-app.sh
-      - name: Built-in self-test
+      - name: Unit suites via the binary (what users can run without Xcode)
         run: "'build/Clip for Mac.app/Contents/MacOS/ClipMac' selftest"
-      - name: CLI smoke
-        run: |
-          B='build/Clip for Mac.app/Contents/MacOS/ClipMac'
-          "$B" version
-          "$B" status --json
-          "$B" list --json
+      - name: Integration (real app, isolated data directory)
+        run: ./tests/integration.sh

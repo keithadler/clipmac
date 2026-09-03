@@ -107,19 +107,13 @@ final class Monitor: ObservableObject {
         secureInput = Capabilities.secureInputActive
 
         if ownChangeCounts.remove(cc) != nil { return }
-        if paused { lastSkip = String(localized: "paused"); return }
-        if secureInput { lastSkip = String(localized: "a password field has focus"); return }
-
-        let types = Set((pb.types ?? []).map(\.rawValue))
-        if !types.isDisjoint(with: Monitor.concealedTypes) { lastSkip = String(localized: "marked concealed by the source app"); return }
-
         let front = NSWorkspace.shared.frontmostApplication
-        if let bid = front?.bundleIdentifier, Prefs.excludedBundleIDs.contains(bid) {
-            lastSkip = String(localized: "copied from an excluded app"); return
+        let types = Set((pb.types ?? []).map(\.rawValue))
+        if let why = Monitor.refusal(types: types, frontBundleID: front?.bundleIdentifier, secureInput: secureInput, paused: paused) {
+            lastSkip = why.description; return
         }
-
-        guard let capture = Monitor.read(pb, source: front) else { lastSkip = String(localized: "nothing readable on the pasteboard"); return }
-        if capture.size > Prefs.sizeCapBytes { lastSkip = String(localized: "larger than the size cap"); return }
+        guard let capture = Monitor.read(pb, source: front) else { lastSkip = Refusal.unreadable.description; return }
+        if let why = Monitor.refusal(size: capture.size) { lastSkip = why.description; return }
 
         lastSkip = nil
         let item = Store.shared.insert(capture)
@@ -128,8 +122,37 @@ final class Monitor: ObservableObject {
         NotificationCenter.default.post(name: .clipHistoryChanged, object: nil)
     }
 
+    /// Why a pasteboard change is not kept. Every rule lives here so it can be tested without a pasteboard.
+    enum Refusal: Equatable, CustomStringConvertible {
+        case paused, secureInput, concealed, excludedApp(String), tooLarge, unreadable
+
+        var description: String {
+            switch self {
+            case .paused: return String(localized: "paused")
+            case .secureInput: return String(localized: "a password field has focus")
+            case .concealed: return String(localized: "marked concealed by the source app")
+            case .excludedApp: return String(localized: "copied from an excluded app")
+            case .tooLarge: return String(localized: "larger than the size cap")
+            case .unreadable: return String(localized: "nothing readable on the pasteboard")
+            }
+        }
+    }
+
+    nonisolated static func refusal(types: Set<String>, frontBundleID: String?, secureInput: Bool, paused: Bool,
+                                    excluded: [String] = Prefs.excludedBundleIDs) -> Refusal? {
+        if paused { return .paused }
+        if secureInput { return .secureInput }
+        if !types.isDisjoint(with: concealedTypes) { return .concealed }
+        if let bid = frontBundleID, excluded.contains(bid) { return .excludedApp(bid) }
+        return nil
+    }
+
+    nonisolated static func refusal(size: Int, cap: Int = Prefs.sizeCapBytes) -> Refusal? {
+        size > cap ? .tooLarge : nil
+    }
+
     /// Reads the richest representation plus a plain-text fallback for search.
-    static func read(_ pb: NSPasteboard, source: NSRunningApplication?) -> Capture? {
+    nonisolated static func read(_ pb: NSPasteboard, source: NSRunningApplication?) -> Capture? {
         let bid = source?.bundleIdentifier
         let name = source?.localizedName
         let string = pb.string(forType: .string)

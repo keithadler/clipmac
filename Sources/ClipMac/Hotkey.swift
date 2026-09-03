@@ -94,6 +94,7 @@ enum Hotkey {
 
     /// "⌥⌘V" style description.
     static func describe(_ kind: Kind = .panel) -> String { describe(keyCode: kind.keyCode, modifiers: kind.modifiers) }
+    static func describe(kind: Kind) -> String { describe(kind) }
 
     static func describe(keyCode: Int, modifiers: Int) -> String {
         var s = ""

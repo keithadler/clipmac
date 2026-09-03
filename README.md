@@ -115,8 +115,25 @@ dependencies beyond the system frameworks.
 That builds a universal binary, wraps it in `Clip for Mac.app`, copies it to /Applications and
 symlinks `clipmac` onto your PATH. Run `./make-local-identity.sh` once so macOS stops re-asking
 for Accessibility after every rebuild. `./make-dmg.sh` makes the release disk image;
-`./notarize.sh` documents the Developer ID path. `clipmac selftest` runs the built-in checks with nothing but the Command Line Tools;
-`swift test` runs the XCTest suite where Xcode is installed (CI does both). `Casks/clipmac.rb` is the Homebrew cask for the first public release.
+`./notarize.sh` documents the Developer ID path. See Testing below. `Casks/clipmac.rb` is the Homebrew cask for the first public release.
+
+## Testing
+
+Three layers, one source of truth:
+
+- **Unit suites** live in `Sources/ClipMac/Tests` and run against an in-memory store and a
+  throwaway defaults suite, so they never touch your history. Run them from the binary with
+  nothing but the Command Line Tools:
+
+  ```bash
+  clipmac selftest              # or: clipmac selftest --filter Store --json
+  ```
+
+- **XCTest bridge** (`Tests/ClipMacTests`) runs the same suites under `swift test` on any Mac
+  with Xcode, which is what CI uses.
+- **Integration** (`tests/integration.sh`) launches the real app with its own data directory
+  (`CLIPMAC_HOME`), copies text, links, secrets, concealed items, RTF, images and files, and
+  checks what the CLI reports: capture, refusal, dedup, pause, search, pins, forget, wipe.
 
 ## Layout
 

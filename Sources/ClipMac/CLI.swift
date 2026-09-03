@@ -27,7 +27,7 @@ enum CLI {
       clipmac assist "<question>" [--local | --cloud] [--last N | --today] [--yes] [--json]
       clipmac assist log [--json]
       clipmac status [--json]
-      clipmac selftest [--json]         run the built-in checks (no Xcode needed)
+      clipmac selftest [--filter S] [--list] [--json]   run the built-in test suites (no Xcode needed)
       clipmac help | version
 
     ITEMS
@@ -54,7 +54,7 @@ enum CLI {
     }
     private static func positional(_ args: [String]) -> [String] {
         var out: [String] = []; var skip = false
-        let valued: Set<String> = ["--limit", "--keyword", "--app", "--export", "--last"]
+        let valued: Set<String> = ["--limit", "--keyword", "--app", "--export", "--last", "--filter"]
         for a in args {
             if skip { skip = false; continue }
             if valued.contains(a) { skip = true; continue }
@@ -226,7 +226,9 @@ enum CLI {
             return assist(args, json: json)
 
         case "selftest":
-            return SelfTest.run(json: json)
+            if flag("--list", args) { TestKit.list(); return 0 }
+            let results = MainActor.assumeIsolated { TestKit.run(filter: value("--filter", args)) }
+            return TestKit.report(results, json: json)
 
         default:
             fputs("unknown command: \(cmd)\n\n\(usage)\n", stderr)

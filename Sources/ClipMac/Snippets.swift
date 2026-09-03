@@ -18,8 +18,8 @@ enum Snippets {
     }
 
     /// Writes a .plist that System Settings › Keyboard › Text Replacements accepts by drag-and-drop.
-    static func exportTextReplacements(to url: URL) throws -> Int {
-        let rows: [[String: String]] = all().compactMap { item in
+    static func exportTextReplacements(to url: URL, items: [Item] = Snippets.all()) throws -> Int {
+        let rows: [[String: String]] = items.compactMap { item in
             guard let k = item.keyword, !k.isEmpty, item.kind != .image, item.kind != .file else { return nil }
             return ["shortcut": k, "phrase": item.plain]
         }

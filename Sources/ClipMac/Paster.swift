@@ -15,8 +15,7 @@ import AppKit
 enum Paster {
     struct Snapshot { let items: [[NSPasteboard.PasteboardType: Data]] }
 
-    static func snapshot() -> Snapshot {
-        let pb = NSPasteboard.general
+    static func snapshot(of pb: NSPasteboard = .general) -> Snapshot {
         var out: [[NSPasteboard.PasteboardType: Data]] = []
         for item in pb.pasteboardItems ?? [] {
             var d: [NSPasteboard.PasteboardType: Data] = [:]
@@ -29,9 +28,8 @@ enum Paster {
     }
 
     @MainActor
-    static func restore(_ s: Snapshot) {
-        let pb = NSPasteboard.general
-        Monitor.shared.expectOwnChange()
+    static func restore(_ s: Snapshot, to pb: NSPasteboard = .general) {
+        if pb === NSPasteboard.general { Monitor.shared.expectOwnChange() }
         pb.clearContents()
         let items: [NSPasteboardItem] = s.items.map { dict in
             let it = NSPasteboardItem()
@@ -43,9 +41,8 @@ enum Paster {
 
     /// Writes the item to the general pasteboard. `plain` strips everything but the string.
     @MainActor
-    static func write(_ item: Item, plain: Bool) {
-        let pb = NSPasteboard.general
-        Monitor.shared.expectOwnChange()
+    static func write(_ item: Item, plain: Bool, to pb: NSPasteboard = .general) {
+        if pb === NSPasteboard.general { Monitor.shared.expectOwnChange() }
         pb.clearContents()
         if plain || (item.kind != .image && item.kind != .file && item.blobHash == nil) {
             pb.setString(item.plain, forType: .string)

@@ -19,9 +19,10 @@ final class PasteStack: ObservableObject {
     func clear() { items.removeAll() }
 
     /// Pastes the oldest queued item and drops it. Beeps when the stack is empty.
+    func pop() -> Item? { items.isEmpty ? nil : items.removeFirst() }
+
     func pasteNext() {
-        guard !items.isEmpty else { NSSound.beep(); return }
-        let item = items.removeFirst()
+        guard let item = pop() else { NSSound.beep(); return }
         Paster.paste(item, plain: false)
     }
 }
