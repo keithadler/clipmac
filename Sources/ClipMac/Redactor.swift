@@ -28,25 +28,41 @@ enum Redactor {
         }
     }
 
-    private struct Pattern { let flag: Flag; let label: String; let regex: NSRegularExpression; let luhn: Bool }
+    private struct Pattern {
+        let flag: Flag
+        let label: String
+        let regex: NSRegularExpression
+        /// Extra check on the matched text (Luhn for cards, character mix for base64) to cut false positives.
+        let validate: ((String) -> Bool)?
+        init(flag: Flag, label: String, regex: NSRegularExpression, validate: ((String) -> Bool)? = nil) {
+            self.flag = flag; self.label = label; self.regex = regex; self.validate = validate
+        }
+    }
+
+    /// Real base64 secrets mix cases and digits; a long run of one class is prose, a hash, or padding.
+    static func looksLikeBase64Secret(_ s: String) -> Bool {
+        var upper = false, lower = false, digit = false
+        for c in s { if c.isUppercase { upper = true } else if c.isLowercase { lower = true } else if c.isNumber { digit = true } }
+        return upper && lower && digit
+    }
 
     private static func re(_ p: String, _ opts: NSRegularExpression.Options = []) -> NSRegularExpression {
         try! NSRegularExpression(pattern: p, options: opts)
     }
 
     private static let patterns: [Pattern] = [
-        Pattern(flag: .privateKey, label: "PRIVATE KEY", regex: re("-----BEGIN [A-Z ]*PRIVATE KEY-----[\\s\\S]*?-----END [A-Z ]*PRIVATE KEY-----|-----BEGIN [A-Z ]*PRIVATE KEY-----[\\s\\S]*"), luhn: false),
-        Pattern(flag: .apiKey, label: "API KEY", regex: re("\\bsk-ant-[A-Za-z0-9_\\-]{20,}"), luhn: false),
-        Pattern(flag: .apiKey, label: "API KEY", regex: re("\\bsk-(?:proj-|live-|test-)?[A-Za-z0-9_\\-]{20,}"), luhn: false),
-        Pattern(flag: .apiKey, label: "API KEY", regex: re("\\b(?:AKIA|ASIA)[0-9A-Z]{16}\\b"), luhn: false),
-        Pattern(flag: .apiKey, label: "API KEY", regex: re("\\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{36,}\\b|\\bgithub_pat_[A-Za-z0-9_]{60,}"), luhn: false),
-        Pattern(flag: .apiKey, label: "API KEY", regex: re("\\bxox[abprs]-[A-Za-z0-9\\-]{10,}"), luhn: false),
-        Pattern(flag: .apiKey, label: "API KEY", regex: re("\\bAIza[0-9A-Za-z_\\-]{35}\\b"), luhn: false),
-        Pattern(flag: .apiKey, label: "API KEY", regex: re("\\b(?:glpat|pypi|npm|hf|shpat|shpss|sq0atp|SG\\.)[A-Za-z0-9_\\-.]{20,}"), luhn: false),
-        Pattern(flag: .jwt, label: "JWT", regex: re("\\beyJ[A-Za-z0-9_\\-]{8,}\\.[A-Za-z0-9_\\-]{8,}\\.[A-Za-z0-9_\\-]{8,}\\b"), luhn: false),
-        Pattern(flag: .credential, label: "CREDENTIAL", regex: re("(?i)\\b(?:api[_\\-]?key|secret|token|passw(?:or)?d|auth|bearer)\\b\\s*[:=]\\s*[\"']?([^\\s\"',;]{8,})"), luhn: false),
-        Pattern(flag: .cardNumber, label: "CARD", regex: re("\\b(?:\\d[ \\-]?){13,19}\\b"), luhn: true),
-        Pattern(flag: .longBase64, label: "BASE64", regex: re("(?<![A-Za-z0-9+/=])[A-Za-z0-9+/]{48,}={0,2}(?![A-Za-z0-9+/=])"), luhn: false),
+        Pattern(flag: .privateKey, label: "PRIVATE KEY", regex: re("-----BEGIN [A-Z ]*PRIVATE KEY-----[\\s\\S]*?-----END [A-Z ]*PRIVATE KEY-----|-----BEGIN [A-Z ]*PRIVATE KEY-----[\\s\\S]*")),
+        Pattern(flag: .apiKey, label: "API KEY", regex: re("\\bsk-ant-[A-Za-z0-9_\\-]{20,}")),
+        Pattern(flag: .apiKey, label: "API KEY", regex: re("\\bsk-(?:proj-|live-|test-)?[A-Za-z0-9_\\-]{20,}")),
+        Pattern(flag: .apiKey, label: "API KEY", regex: re("\\b(?:AKIA|ASIA)[0-9A-Z]{16}\\b")),
+        Pattern(flag: .apiKey, label: "API KEY", regex: re("\\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{36,}\\b|\\bgithub_pat_[A-Za-z0-9_]{60,}")),
+        Pattern(flag: .apiKey, label: "API KEY", regex: re("\\bxox[abprs]-[A-Za-z0-9\\-]{10,}")),
+        Pattern(flag: .apiKey, label: "API KEY", regex: re("\\bAIza[0-9A-Za-z_\\-]{35}\\b")),
+        Pattern(flag: .apiKey, label: "API KEY", regex: re("\\b(?:glpat|pypi|npm|hf|shpat|shpss|sq0atp|SG\\.)[A-Za-z0-9_\\-.]{20,}")),
+        Pattern(flag: .jwt, label: "JWT", regex: re("\\beyJ[A-Za-z0-9_\\-]{8,}\\.[A-Za-z0-9_\\-]{8,}\\.[A-Za-z0-9_\\-]{8,}\\b")),
+        Pattern(flag: .credential, label: "CREDENTIAL", regex: re("(?i)\\b(?:api[_\\-]?key|secret|token|passw(?:or)?d|auth|bearer)\\b\\s*[:=]\\s*[\"']?(?!\\[REDACTED)([^\\s\"',;]{8,})")),
+        Pattern(flag: .cardNumber, label: "CARD", regex: re("\\b(?:\\d[ \\-]?){13,19}\\b"), validate: luhn),
+        Pattern(flag: .longBase64, label: "BASE64", regex: re("(?<![A-Za-z0-9+/=])[A-Za-z0-9+/]{48,}={0,2}(?![A-Za-z0-9+/=])"), validate: looksLikeBase64Secret),
     ]
 
     static func luhn(_ s: String) -> Bool {
@@ -66,7 +82,7 @@ enum Redactor {
         let range = NSRange(location: 0, length: min(ns.length, 200_000))
         for p in patterns where !f.contains(p.flag) {
             for m in p.regex.matches(in: text, options: [], range: range) {
-                if p.luhn && !luhn(ns.substring(with: m.range)) { continue }
+                if let v = p.validate, !v(ns.substring(with: m.range)) { continue }
                 f.insert(p.flag); break
             }
         }
@@ -83,7 +99,7 @@ enum Redactor {
             let matches = p.regex.matches(in: out, options: [], range: NSRange(location: 0, length: ns.length))
             for m in matches.reversed() {
                 let hit = ns.substring(with: m.range)
-                if p.luhn && !luhn(hit) { continue }
+                if let v = p.validate, !v(hit) { continue }
                 let replacement: String
                 if p.flag == .credential, m.numberOfRanges > 1, m.range(at: 1).location != NSNotFound {
                     // keep "password=" so the summary still makes sense, mask only the value

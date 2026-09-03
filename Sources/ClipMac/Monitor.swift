@@ -17,8 +17,17 @@ final class Monitor: ObservableObject {
     @Published private(set) var lastCaptured: Item?
     @Published private(set) var secureInput = false
 
+    let pasteboard: NSPasteboard
+    /// Test hook: replaces the real secure-input check.
+    var secureInputProbe: () -> Bool = { Capabilities.secureInputActive }
+    /// Test hook: replaces the frontmost-app lookup.
+    var frontmostProbe: () -> (bundleID: String?, name: String?) = {
+        let app = NSWorkspace.shared.frontmostApplication
+        return (app?.bundleIdentifier, app?.localizedName)
+    }
+
     private var timer: DispatchSourceTimer?
-    private var lastChangeCount = NSPasteboard.general.changeCount
+    private var lastChangeCount: Int
     private var locked = false
     private var fastInterval = true
     /// changeCounts the app itself produced (paste, restore). Never captured.
@@ -29,7 +38,11 @@ final class Monitor: ObservableObject {
         "com.agilebits.onepassword", "com.typeit4me.clipping",
     ]
 
-    private init() {
+    private convenience init() { self.init(pasteboard: .general) }
+
+    init(pasteboard: NSPasteboard) {
+        self.pasteboard = pasteboard
+        lastChangeCount = pasteboard.changeCount
         let dnc = DistributedNotificationCenter.default()
         dnc.addObserver(forName: Notification.Name("com.apple.screenIsLocked"), object: nil, queue: .main) { [weak self] _ in
             Task { @MainActor in self?.locked = true; self?.reschedule() }
@@ -42,7 +55,7 @@ final class Monitor: ObservableObject {
 
     func start() {
         guard timer == nil else { return }
-        lastChangeCount = NSPasteboard.general.changeCount
+        lastChangeCount = pasteboard.changeCount
         reschedule()
     }
 
@@ -59,7 +72,7 @@ final class Monitor: ObservableObject {
     }
 
     /// Called by Paster before it writes, so the resulting change isn't captured as a new item.
-    func expectOwnChange() { ownChangeCounts.insert(NSPasteboard.general.changeCount + 1) }
+    func expectOwnChange() { ownChangeCounts.insert(pasteboard.changeCount + 1) }
 
     // MARK: - Pause
 
@@ -88,13 +101,13 @@ final class Monitor: ObservableObject {
             CGEventSource.secondsSinceLastEventType(.combinedSessionState, eventType: .mouseMoved))
     }
 
-    private func poll() {
-        let pb = NSPasteboard.general
+    func poll() {
+        let pb = pasteboard
         let cc = pb.changeCount
         if cc == lastChangeCount {
             idleTicks += 1
             if idleTicks % 4 == 0 {
-                refreshPauseState(); secureInput = Capabilities.secureInputActive
+                refreshPauseState(); secureInput = secureInputProbe()
                 let away = Monitor.userIdleSeconds > 120
                 if fastInterval == away { fastInterval = !away; reschedule() }
             }
@@ -104,15 +117,15 @@ final class Monitor: ObservableObject {
         lastChangeCount = cc
         if !fastInterval { fastInterval = true; reschedule() }
         refreshPauseState()
-        secureInput = Capabilities.secureInputActive
+        secureInput = secureInputProbe()
 
         if ownChangeCounts.remove(cc) != nil { return }
-        let front = NSWorkspace.shared.frontmostApplication
+        let front = frontmostProbe()
         let types = Set((pb.types ?? []).map(\.rawValue))
-        if let why = Monitor.refusal(types: types, frontBundleID: front?.bundleIdentifier, secureInput: secureInput, paused: paused) {
+        if let why = Monitor.refusal(types: types, frontBundleID: front.bundleID, secureInput: secureInput, paused: paused) {
             lastSkip = why.description; return
         }
-        guard let capture = Monitor.read(pb, source: front) else { lastSkip = Refusal.unreadable.description; return }
+        guard let capture = Monitor.read(pb, sourceBundleID: front.bundleID, sourceName: front.name) else { lastSkip = Refusal.unreadable.description; return }
         if let why = Monitor.refusal(size: capture.size) { lastSkip = why.description; return }
 
         lastSkip = nil
@@ -152,9 +165,7 @@ final class Monitor: ObservableObject {
     }
 
     /// Reads the richest representation plus a plain-text fallback for search.
-    nonisolated static func read(_ pb: NSPasteboard, source: NSRunningApplication?) -> Capture? {
-        let bid = source?.bundleIdentifier
-        let name = source?.localizedName
+    nonisolated static func read(_ pb: NSPasteboard, sourceBundleID bid: String?, sourceName name: String?) -> Capture? {
         let string = pb.string(forType: .string)
 
         if let urls = pb.readObjects(forClasses: [NSURL.self], options: [.urlReadingFileURLsOnly: true]) as? [URL], !urls.isEmpty {

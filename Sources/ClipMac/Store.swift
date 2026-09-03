@@ -35,15 +35,21 @@ final class Store {
     private var db: OpaquePointer?
     private let queue = DispatchQueue(label: "com.keithadler.clipmac.store")
     let inMemory: Bool
+    let blobDir: URL
 
     /// Session-only mode keeps everything in RAM; nothing is written and nothing survives quit.
-    init(inMemory: Bool = Prefs.sessionOnly) {
-        self.inMemory = inMemory
-        let path = inMemory ? ":memory:" : Store.dbURL.path
+    convenience init(inMemory: Bool = Prefs.sessionOnly) {
+        self.init(path: inMemory ? ":memory:" : Store.dbURL.path, blobDir: Store.blobDir)
+    }
+
+    /// A store at an explicit path (tests use a temporary directory). ":memory:" for RAM only.
+    init(path: String, blobDir: URL) {
+        self.inMemory = path == ":memory:"
+        self.blobDir = blobDir
         var handle: OpaquePointer?
         sqlite3_open_v2(path, &handle, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX, nil)
         db = handle
-        try? FileManager.default.createDirectory(at: Store.blobDir, withIntermediateDirectories: true)
+        if !inMemory { try? FileManager.default.createDirectory(at: blobDir, withIntermediateDirectories: true) }
         migrate()
     }
 
@@ -200,7 +206,7 @@ final class Store {
     func writeBlob(_ data: Data) -> String {
         let hash = Store.sha256(data)
         if inMemory { queue.sync { memoryBlobs[hash] = data }; return hash }
-        let url = Store.blobDir.appendingPathComponent(hash)
+        let url = blobDir.appendingPathComponent(hash)
         if !FileManager.default.fileExists(atPath: url.path) {
             try? data.write(to: url, options: .atomic)
         }
@@ -210,15 +216,15 @@ final class Store {
     func blob(_ hash: String?) -> Data? {
         guard let hash else { return nil }
         if inMemory { return queue.sync { memoryBlobs[hash] } }
-        return try? Data(contentsOf: Store.blobDir.appendingPathComponent(hash))
+        return try? Data(contentsOf: blobDir.appendingPathComponent(hash))
     }
 
     private func deleteOrphanBlobs() {
         let referenced = Set(query("SELECT DISTINCT blob_hash FROM items WHERE blob_hash IS NOT NULL") { Store.col($0, 0) ?? "" })
         if inMemory { queue.sync { memoryBlobs = memoryBlobs.filter { referenced.contains($0.key) } }; return }
-        guard let files = try? FileManager.default.contentsOfDirectory(atPath: Store.blobDir.path) else { return }
+        guard let files = try? FileManager.default.contentsOfDirectory(atPath: blobDir.path) else { return }
         for f in files where !referenced.contains(f) {
-            try? FileManager.default.removeItem(at: Store.blobDir.appendingPathComponent(f))
+            try? FileManager.default.removeItem(at: blobDir.appendingPathComponent(f))
         }
     }
 

@@ -71,3 +71,19 @@ enum RedactorSuite {
         },
     ])
 }
+
+extension RedactorSuite {
+    /// Regression cases found by the property test.
+    static let regressions = TestSuite(name: "Redactor", cases: [
+        TestCase(name: "masking is idempotent on credential markers") { t in
+            let once = Redactor.mask("password=hunter2hunter2").text
+            t.equal(Redactor.mask(once).text, once, "second pass leaves the marker alone")
+        },
+        TestCase(name: "long runs of letters are not base64 secrets") { t in
+            t.check(Redactor.flags(in: String(repeating: "a", count: 200)).isEmpty, "one class only")
+            t.check(Redactor.flags(in: "supercalifragilisticexpialidocioussupercalifragilisticexpialidocious").isEmpty, "long word")
+            t.check(!Redactor.flags(in: "sha256: " + String(repeating: "0123456789abcdef", count: 4)).contains(.longBase64), "hex hash is not base64")
+            t.check(Redactor.looksLikeBase64Secret("QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowMTIzNDU2Nzg5"), "real base64 mixes classes")
+        },
+    ])
+}

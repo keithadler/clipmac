@@ -17,6 +17,10 @@ import FoundationModels
 final class Assist {
     static let shared = Assist()
 
+    /// Injection points for tests: a stubbed URLSession and a key source that avoids the Keychain.
+    var session: URLSession = .shared
+    var keyProvider: (Provider) -> String? = { Assist.apiKey(for: $0) }
+
     // MARK: - Tier 1: semantic search
 
     private let embedding: NLEmbedding? = NLEmbedding.sentenceEmbedding(for: Capabilities.embeddingLanguage)
@@ -152,7 +156,7 @@ final class Assist {
     /// Sends the prepared (already masked and confirmed) payload. Their key, their bill, their data.
     func sendCloud(_ p: Prepared, provider: Provider = Provider(rawValue: Prefs.cloudProvider) ?? .anthropic,
                    model: String = Prefs.cloudModel) async throws -> CloudReply {
-        guard let key = Assist.apiKey(for: provider), !key.isEmpty else { throw AssistError.noKey(provider) }
+        guard let key = keyProvider(provider), !key.isEmpty else { throw AssistError.noKey(provider) }
         var req = URLRequest(url: provider.endpoint)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "content-type")
@@ -171,7 +175,7 @@ final class Assist {
                     "messages": [["role": "system", "content": Assist.instructions], ["role": "user", "content": user]]]
         }
         req.httpBody = try JSONSerialization.data(withJSONObject: body)
-        let (data, resp) = try await URLSession.shared.data(for: req)
+        let (data, resp) = try await session.data(for: req)
         let status = (resp as? HTTPURLResponse)?.statusCode ?? 0
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw AssistError.badResponse("not JSON") }
         guard (200..<300).contains(status) else {
