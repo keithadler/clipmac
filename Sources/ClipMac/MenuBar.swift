@@ -43,6 +43,7 @@ struct MenuBarContent: View {
         Divider()
         Button("Clip for Mac Help") { Help.open() }.keyboardShortcut("?")
         Button("Keyboard Shortcuts") { Help.open(anchor: "keys") }
+        Button("More from the Same Maker…") { NSWorkspace.shared.open(URL(string: "https://keithadler.github.io")!) }
         Button("Welcome Tour") { WelcomeController.shared.show() }
         Button("Check for Updates…") { Updates.checkAndPresent() }
         Button("About Clip for Mac") { Updates.showAbout() }

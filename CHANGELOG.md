@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.2 — 2026-09-03
+
+"More from the Same Maker" in the Help menu and the menu bar, pointing at the family page. Help and README gained the same section.
+
 ## 1.0.1 — 2026-09-02
 
 - Opens at login by default (registered once on first run) and checks for a new version once a day

@@ -8,7 +8,7 @@ Free, MIT licensed, no account, no telemetry. Same family as [Tidy for Mac](http
 
 ## Download
 
-**[Download Clip for Mac 1.0.1 (DMG, 2.7 MB)](https://github.com/keithadler/clipmac/releases/download/v1.0.1/Clip-for-Mac-1.0.1.dmg)** · macOS 14 or later, Apple silicon and Intel
+**[Download Clip for Mac 1.0.1 (DMG, 2.7 MB)](https://github.com/keithadler/clipmac/releases/download/v1.0.2/Clip-for-Mac-1.0.2.dmg)** · macOS 14 or later, Apple silicon and Intel
 
 1. Open the downloaded file and drag **Clip for Mac** into **Applications**.
 2. Open it from Applications. macOS will say it can't check the app for malicious software: click **Done**, then **System Settings › Privacy & Security › Open Anyway**. That happens once, because this is a free app without Apple's $99-a-year certificate.
@@ -220,3 +220,11 @@ Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other cou
 is an independent open-source project and is not affiliated with, endorsed by, or sponsored by
 Apple. 1Password, Bitwarden, Raycast, Maccy, Paste and other names are trademarks of their
 respective owners and are used only to identify those products.
+
+## More from the same maker
+
+Three more small apps built the same way: each does one thing, says exactly what it touches, and never phones home. Free, MIT licensed, no accounts. All four at [keithadler.github.io](https://keithadler.github.io).
+
+- [Permissions for Mac](https://github.com/keithadler/permsmac): every permission on your Mac on one screen, in plain English, with what changed since last week.
+- [Tidy for Mac](https://github.com/keithadler/tidymac): cleanup and speed for the whole family; nothing is deleted, only moved to the Trash with an undoable receipt.
+- [Stash for Mac](https://github.com/keithadler/stashmac): encrypted backup into storage you already have; the provider only ever sees ciphertext.

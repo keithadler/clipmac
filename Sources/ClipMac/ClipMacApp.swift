@@ -33,6 +33,8 @@ struct ClipMacApp: App {
                     Button("Clip for Mac Help") { Help.open() }
                     Button("Welcome Tour") { WelcomeController.shared.show() }
                     Button("Report a Problem…") { NSWorkspace.shared.open(Help.issues) }
+                    Divider()
+                    Button("More from the Same Maker…") { NSWorkspace.shared.open(URL(string: "https://keithadler.github.io")!) }
                 }
             }
     }
