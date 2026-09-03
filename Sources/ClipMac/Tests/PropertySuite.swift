@@ -1,25 +1,40 @@
 import Foundation
 
+/// Seeded so a failure prints a seed that reproduces it.
+struct SeededRNG: RandomNumberGenerator {
+    var state: UInt64
+    mutating func next() -> UInt64 {
+        state &+= 0x9E3779B97F4A7C15
+        var z = state
+        z = (z ^ (z >> 30)) &* 0xBF58476D1CE4E5B9
+        z = (z ^ (z >> 27)) &* 0x94D049BB133111EB
+        return z ^ (z >> 31)
+    }
+}
+
 enum PropertySuite {
-    static func randomText(_ rng: inout SystemRandomNumberGenerator, _ n: Int) -> String {
+    static func randomText(_ rng: inout SeededRNG, _ n: Int) -> String {
         let alphabet = Array("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _-=:.,/+\n\"'éñ日本🙂")
         return String((0..<n).map { _ in alphabet[Int.random(in: 0..<alphabet.count, using: &rng)] })
     }
 
     static let suite = TestSuite(name: "Properties", cases: [
         TestCase(name: "redactor never crashes and masking is idempotent") { t in
-            var rng = SystemRandomNumberGenerator()
+            let seed = UInt64(Date().timeIntervalSince1970)
+            var rng = SeededRNG(state: seed)
             let secrets = ["sk-ant-api03-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", "AKIAIOSFODNN7EXAMPLE", "password=hunter2hunter2", "4111 1111 1111 1111"]
             for i in 0..<300 {
                 var s = randomText(&rng, Int.random(in: 0..<200, using: &rng))
-                if i % 3 == 0 { s += " " + secrets[i % secrets.count] + " " + randomText(&rng, 20) }
+                // A word after the secret: a digit directly after a card number extends the run past 19
+                // digits and the rule (correctly) no longer sees a card number there.
+                if i % 3 == 0 { s += " " + secrets[i % secrets.count] + " end " + randomText(&rng, 20) }
                 let once = Redactor.mask(s)
                 let twice = Redactor.mask(once.text)
-                if once.text != twice.text { t.fail("mask not idempotent for: \(s.prefix(60))"); break }
-                if i % 3 == 0 && !once.text.contains("[REDACTED") { t.fail("secret survived in: \(s.prefix(60))"); break }
+                if once.text != twice.text { t.fail("seed \(seed): mask not idempotent for: \(s.prefix(60))"); break }
+                if i % 3 == 0 && !once.text.contains("[REDACTED") { t.fail("seed \(seed): secret survived in: \(s.prefix(60))"); break }
                 _ = Redactor.flags(in: s)
             }
-            t.check(true, "300 random inputs")
+            t.check(true, "300 random inputs (seed \(seed))")
             t.equal(Redactor.mask("").text, "", "empty")
             t.check(Redactor.flags(in: String(repeating: "a", count: 300_000)).isEmpty, "huge input bounded")
         },
