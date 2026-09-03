@@ -84,7 +84,9 @@ enum Capabilities {
         if let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String { return v }
         var url = (Bundle.main.executableURL ?? URL(fileURLWithPath: CommandLine.arguments[0])).resolvingSymlinksInPath()
         while url.path != "/" {
-            if url.pathExtension == "app", let b = Bundle(url: url), let v = b.infoDictionary?["CFBundleShortVersionString"] as? String { return v }
+            // Only Clip's own bundle counts: under XCTest the binary lives inside Xcode.app.
+            if url.pathExtension == "app", let b = Bundle(url: url), b.bundleIdentifier == "com.keithadler.clipmac",
+               let v = b.infoDictionary?["CFBundleShortVersionString"] as? String { return v }
             url = url.deletingLastPathComponent()
         }
         return "dev"
