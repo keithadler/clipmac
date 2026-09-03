@@ -6,6 +6,7 @@
 
 import Foundation
 import AppKit
+import ServiceManagement
 
 enum CLI {
     static let usage = """
@@ -61,6 +62,16 @@ enum CLI {
             out.append(a)
         }
         return out
+    }
+
+    static var loginItemState: String {
+        switch SMAppService.mainApp.status {
+        case .enabled: return "enabled"
+        case .requiresApproval: return "requires approval in System Settings › General › Login Items"
+        case .notRegistered: return "off"
+        case .notFound: return "not found (app not in /Applications?)"
+        @unknown default: return "unknown"
+        }
     }
 
     static func resolve(_ ref: String?) -> Item? {
@@ -193,6 +204,7 @@ enum CLI {
                 "filevault": fv as Any, "semantic_search": Prefs.semanticSearch && Capabilities.sentenceEmbeddingAvailable,
                 "on_device_model": Capabilities.onDeviceModelAvailable, "cloud_assist": Prefs.cloudAssist,
                 "hotkey": Hotkey.describe(), "database": Store.dbURL.path, "excluded_apps": Prefs.excludedBundleIDs,
+                "login_item": loginItemState,
             ]
             if json { print(Dump.json(info)); return fv == false ? 1 : 0 }
             print("""
@@ -206,6 +218,7 @@ enum CLI {
             on-device AI:   \(Capabilities.onDeviceModelAvailable ? "available" : "not available")
             cloud AI:       \(Prefs.cloudAssist ? "on (\(Prefs.cloudProvider), \(Prefs.cloudModel))" : "off")
             excluded apps:  \(Prefs.excludedBundleIDs.count)
+            login item:     \(loginItemState)
             """)
             return fv == false ? 1 : 0
 

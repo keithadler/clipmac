@@ -6,8 +6,6 @@ import AppKit
 struct MenuBarContent: View {
     @ObservedObject private var monitor = Monitor.shared
     @Environment(\.openSettings) private var openSettings
-    @Environment(\.openWindow) private var openWindow
-
     var body: some View {
         Button { PanelController.shared.toggle() } label: { Text("Open Clipboard    \(Hotkey.describe())") }
         if Hotkey.conflict { Text("Shortcut taken by another app. Change it in Settings.") }
@@ -25,7 +23,7 @@ struct MenuBarContent: View {
         }
         if monitor.secureInput { Text("Password field active: not capturing") }
         Divider()
-        Button("Ask Your Clipboard…") { NSApp.activate(); openWindow(id: "assist") }
+        Button("Ask Your Clipboard…") { AssistWindowController.shared.show() }
             .disabled(!((Prefs.onDeviceModel && Capabilities.onDeviceModelAvailable) || Prefs.cloudAssist))
         Button("Export Pins as Text Replacements…") { Snippets.exportWithDialog() }
         Divider()
@@ -137,5 +135,28 @@ struct AssistView: View {
                 }
             } catch { self.error = error.localizedDescription }
         }
+    }
+}
+
+/// The Ask window is managed by hand: a SwiftUI `Window` scene would open itself at launch, which
+/// is wrong for a menu bar app.
+@MainActor
+final class AssistWindowController {
+    static let shared = AssistWindowController()
+    private var window: NSWindow?
+
+    func show() {
+        if window == nil {
+            let w = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 620, height: 520),
+                             styleMask: [.titled, .closable, .resizable, .miniaturizable], backing: .buffered, defer: false)
+            w.title = String(localized: "Ask Your Clipboard")
+            w.isReleasedWhenClosed = false
+            w.setFrameAutosaveName("AskWindow")
+            w.contentView = NSHostingView(rootView: AssistView())
+            w.center()
+            window = w
+        }
+        NSApp.activate()
+        window?.makeKeyAndOrderFront(nil)
     }
 }

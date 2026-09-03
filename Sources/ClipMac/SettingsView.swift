@@ -265,7 +265,6 @@ struct AssistTab: View {
     @State private var key = ""
     @State private var hasKey = false
     @State private var log = Store.shared.assistLog(limit: 20)
-    @Environment(\.openWindow) private var openWindow
 
     private var prov: Assist.Provider { Assist.Provider(rawValue: provider) ?? .anthropic }
 
@@ -302,7 +301,7 @@ struct AssistTab: View {
                 }
             }
             Section {
-                Button("Ask your clipboard…") { NSApp.activate(); openWindow(id: "assist") }
+                Button("Ask your clipboard…") { AssistWindowController.shared.show() }
                     .disabled(!(onDevice && Capabilities.onDeviceModelAvailable) && !cloud)
             }
         }

@@ -26,9 +26,6 @@ struct ClipMacApp: App {
         }
 
         Settings { SettingsView() }
-
-        Window("Ask Your Clipboard", id: "assist") { AssistView() }
-            .defaultSize(width: 620, height: 520)
             .commands {
                 CommandGroup(replacing: .appInfo) { Button("About Clip for Mac") { Updates.showAbout() } }
                 CommandGroup(after: .appInfo) { Button("Check for Updates…") { Updates.checkAndPresent() } }
