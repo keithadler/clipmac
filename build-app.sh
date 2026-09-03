@@ -92,7 +92,7 @@ for arg in "$@"; do
         done
       fi
       ;;
-    --run) open "$APP";;
+    --run) if [ -d "/Applications/Clip for Mac.app" ] && [[ " $* " == *" --install "* ]]; then open "/Applications/Clip for Mac.app"; else open "$APP"; fi;;
   esac
 done
 exit 0
