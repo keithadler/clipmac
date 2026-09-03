@@ -160,6 +160,9 @@ struct CaptureTab: View {
     @State private var exclusions = Prefs.excludedBundleIDs
     @State private var newID = ""
     @AppStorage("sizeCapMB", store: Prefs.defaults) private var sizeCapMB = 50
+    @AppStorage("recordWindowTitles", store: Prefs.defaults) private var titles = true
+    @AppStorage("skipToasts", store: Prefs.defaults) private var toasts = true
+    @AppStorage("ocrImages", store: Prefs.defaults) private var ocr = true
 
     var body: some View {
         Form {
@@ -188,6 +191,12 @@ struct CaptureTab: View {
             }
             Section {
                 Stepper(value: $sizeCapMB, in: 1...500, step: 5) { Text(String(format: String(localized: "Skip items larger than %lld MB"), sizeCapMB)) }
+                Toggle("Show a note when something isn't saved", isOn: $toasts)
+                Toggle("Remember the window title an item came from", isOn: $titles)
+                Text(Capabilities.accessibilityTrusted ? "\"Safari · GitHub issue #42\" instead of just \"Safari\". Titles stay on this Mac like everything else." : "Needs the Accessibility permission (Settings › Paste); until then only the app name is kept.")
+                    .font(.caption).foregroundStyle(.secondary)
+                Toggle("Read the text in images so screenshots are searchable", isOn: $ocr)
+                Text("On-device, with Apple's Vision framework. The recognised text becomes the item's searchable text.").font(.caption).foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
@@ -215,6 +224,32 @@ struct CaptureTab: View {
 // MARK: - History
 
 struct HistoryTab: View {
+    private func chooseSyncFolder() {
+        let p = NSOpenPanel()
+        p.canChooseDirectories = true; p.canChooseFiles = false; p.canCreateDirectories = true
+        p.message = String(localized: "Choose a folder that is already synced between your Macs.")
+        NSApp.activate()
+        if p.runModal() == .OK, let url = p.url {
+            Prefs.syncFolder = url.path; syncFolder = url.path
+            PinSync.pushIfConfigured()
+            if let n = PinSync.pullIfChanged() { pinNote = String(format: String(localized: "merged %lld pins"), n) }
+        }
+    }
+    private func exportPins() {
+        let p = NSSavePanel(); p.nameFieldStringValue = PinSync.fileName; p.allowedContentTypes = [.json]
+        NSApp.activate()
+        if p.runModal() == .OK, let url = p.url {
+            do { pinNote = String(format: String(localized: "exported %lld pins"), try PinSync.export(to: url)) } catch { pinNote = error.localizedDescription }
+        }
+    }
+    private func importPins() {
+        let p = NSOpenPanel(); p.allowedContentTypes = [.json]
+        NSApp.activate()
+        if p.runModal() == .OK, let url = p.url {
+            do { pinNote = String(format: String(localized: "merged %lld pins"), try PinSync.importFile(url)) } catch { pinNote = error.localizedDescription }
+        }
+    }
+
     @AppStorage("sessionOnly", store: Prefs.defaults) private var sessionOnly = false
     @AppStorage("retentionDays", store: Prefs.defaults) private var days = 30
     @AppStorage("retentionItems", store: Prefs.defaults) private var items = 2000
@@ -223,6 +258,8 @@ struct HistoryTab: View {
     @State private var confirmWipe = false
     @State private var count = Store.shared.count()
     @State private var bytes = Store.shared.totalBytes()
+    @State private var syncFolder = Prefs.syncFolder
+    @State private var pinNote = ""
 
     var body: some View {
         Form {
@@ -235,6 +272,21 @@ struct HistoryTab: View {
             Section {
                 Toggle("Session only (forget everything when the app quits)", isOn: $sessionOnly)
                 Text("Takes effect the next time Clip for Mac opens.").font(.caption).foregroundStyle(.secondary)
+            }
+            Section("Pins on other Macs") {
+                Text("Pins (never history) can travel as a small JSON file. Put it in a folder that iCloud Drive, Dropbox or anything else already syncs, and every Mac running Clip for Mac keeps its pins in step. No account, no server.")
+                    .font(.caption).foregroundStyle(.secondary)
+                HStack {
+                    if let f = syncFolder { Text(f).font(.caption.monospaced()).lineLimit(1).truncationMode(.middle) } else { Text("No sync folder").font(.caption).foregroundStyle(.secondary) }
+                    Spacer()
+                    Button(syncFolder == nil ? "Choose Folder…" : "Change…") { chooseSyncFolder() }
+                    if syncFolder != nil { Button("Stop") { Prefs.syncFolder = nil; syncFolder = nil } }
+                }
+                HStack {
+                    Button("Export Pins…") { exportPins() }
+                    Button("Import Pins…") { importPins() }
+                    if !pinNote.isEmpty { Text(pinNote).font(.caption).foregroundStyle(.secondary) }
+                }
             }
             Section("On disk") {
                 Text(String(format: String(localized: "%lld items, %@, in %@"), count, ByteCountFormatter.string(fromByteCount: Int64(bytes), countStyle: .file), Store.dbURL.deletingLastPathComponent().path))

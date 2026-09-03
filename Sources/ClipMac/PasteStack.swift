@@ -28,4 +28,23 @@ final class PasteStack: ObservableObject {
         guard let item = pop() else { NSSound.beep(); return }
         Paster.paste(item, plain: false)
     }
+
+    /// Every queued item's text, one per line, or as a Markdown list.
+    func joined(asList: Bool) -> String {
+        items.map { item -> String in
+            let text = item.kind == .file ? item.filePaths.joined(separator: "\n") : item.plain.trimmingCharacters(in: .whitespacesAndNewlines)
+            return asList ? "- " + text.replacingOccurrences(of: "\n", with: "\n  ") : text
+        }.joined(separator: "\n")
+    }
+
+    /// Pastes everything queued in one go and empties the stack.
+    func pasteAll(asList: Bool) {
+        guard let first = items.first else { NSSound.beep(); return }
+        var combined = first
+        combined.plain = joined(asList: asList)
+        combined.blobHash = nil
+        combined.kind = .text
+        items.removeAll()
+        Paster.paste(combined, plain: true)
+    }
 }

@@ -21,6 +21,8 @@ struct MenuBarContent: View {
         Button { Paster.pasteCurrentAsPlain() } label: { Text("Paste as Plain Text    \(Hotkey.describe(.plainPaste))") }
         if !stack.isEmpty {
             Button { stack.pasteNext() } label: { Text(String(format: String(localized: "Paste Next of %lld    %@"), stack.count, Hotkey.describe(.pasteNext))) }
+            Button(String(format: String(localized: "Paste All %lld Queued"), stack.count)) { stack.pasteAll(asList: false) }
+            Button("Paste All Queued as List") { stack.pasteAll(asList: true) }
             Button("Clear Paste Stack") { stack.clear() }
         }
         Divider()

@@ -25,6 +25,7 @@ enum Dump {
         if let k = item.keyword { d["keyword"] = k }
         if let b = item.sourceBundleID { d["source_bundle_id"] = b }
         if let n = item.sourceName { d["source_name"] = n }
+        if let w = item.sourceTitle { d["source_title"] = w }
         if let h = item.blobHash { d["blob"] = h; d["blob_type"] = item.blobType ?? "" }
         if item.kind == .file { d["paths"] = item.filePaths }
         return d

@@ -41,6 +41,7 @@ struct Item: Identifiable, Hashable, Codable {
     var blobType: String?          // pasteboard type of the blob (public.rtf, public.png, …)
     var sourceBundleID: String?
     var sourceName: String?
+    var sourceTitle: String?        // front window title at capture time, when Accessibility allows it
     var createdAt: Date
     var lastUsedAt: Date
     var useCount: Int
@@ -54,6 +55,11 @@ struct Item: Identifiable, Hashable, Codable {
     var filePaths: [String] { kind == .file ? plain.split(separator: "\n").map(String.init) : [] }
 
     var looksSensitive: Bool { redactionFlags != 0 }
+
+    /// Text as used for identity: trimmed, inner whitespace collapsed, so "foo " and "foo" are the same item.
+    static func normalized(_ s: String) -> String {
+        s.split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
+    }
 
     /// One line, trimmed, for lists and `clipmac list`.
     static func makePreview(_ s: String, limit: Int = 120) -> String {
@@ -71,6 +77,7 @@ struct Capture {
     var blobType: String?
     var sourceBundleID: String?
     var sourceName: String?
+    var sourceTitle: String? = nil
     var size: Int
 }
 

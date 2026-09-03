@@ -24,9 +24,10 @@ final class Monitor: ObservableObject {
     /// Test hook: replaces the real secure-input check.
     var secureInputProbe: () -> Bool = { Capabilities.secureInputActive }
     /// Test hook: replaces the frontmost-app lookup.
-    var frontmostProbe: () -> (bundleID: String?, name: String?) = {
+    var frontmostProbe: () -> (bundleID: String?, name: String?, title: String?) = {
         let app = NSWorkspace.shared.frontmostApplication
-        return (app?.bundleIdentifier, app?.localizedName)
+        let title = app.flatMap { Prefs.recordWindowTitles ? Capabilities.frontWindowTitle(pid: $0.processIdentifier) : nil }
+        return (app?.bundleIdentifier, app?.localizedName, title)
     }
 
     private var timer: DispatchSourceTimer?
@@ -126,14 +127,16 @@ final class Monitor: ObservableObject {
         let front = frontmostProbe()
         let types = Set((pb.types ?? []).map(\.rawValue))
         if let why = Monitor.refusal(types: types, frontBundleID: front.bundleID, secureInput: secureInput, paused: paused) {
-            lastSkip = why.description; return
+            lastSkip = why.description; Toast.skipped(why); return
         }
-        guard let capture = Monitor.read(pb, sourceBundleID: front.bundleID, sourceName: front.name) else { lastSkip = Refusal.unreadable.description; return }
-        if let why = Monitor.refusal(size: capture.size) { lastSkip = why.description; return }
+        guard var capture = Monitor.read(pb, sourceBundleID: front.bundleID, sourceName: front.name) else { lastSkip = Refusal.unreadable.description; return }
+        if let why = Monitor.refusal(size: capture.size) { lastSkip = why.description; Toast.skipped(why); return }
+        capture.sourceTitle = front.title
 
         lastSkip = nil
         let item = Store.shared.insert(capture)
         lastCaptured = item
+        if item.kind == .image { OCR.recognizeSoon(item) }
         Assist.shared.indexSoon()
         NotificationCenter.default.post(name: .clipHistoryChanged, object: nil)
     }

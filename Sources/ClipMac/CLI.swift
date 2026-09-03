@@ -24,6 +24,8 @@ enum CLI {
       clipmac unpin <item>
       clipmac snip <keyword>             print a pinned snippet
       clipmac snippets [--json]          list pins; --export <file.plist> writes a Text Replacement list
+      clipmac pins export <file.json> | import <file.json> | sync [<folder>|off]
+                                        pins travel as a JSON file you put in any synced folder
       clipmac pause [10m|1h|…]           pause capture (default 10m); clipmac resume
       clipmac forget <item> | --app <bundle-id> | --sensitive
       clipmac wipe --yes                 delete everything, no confirmation dance in scripts
@@ -166,6 +168,33 @@ enum CLI {
             let items = store.pinned()
             if json { print(Dump.json(items.map { Dump.dict($0) })) } else { print(Dump.table(items, positions: false), terminator: "") }
             return 0
+
+        case "pins":
+            switch pos.first {
+            case "export":
+                guard pos.count > 1 else { fputs("pins export needs a file\n", stderr); return 64 }
+                do { let n = try PinSync.export(to: URL(fileURLWithPath: pos[1])); print(json ? Dump.json(["exported": n]) : "exported \(n) pins to \(pos[1])"); return 0 }
+                catch { fputs("\(error.localizedDescription)\n", stderr); return 2 }
+            case "import":
+                guard pos.count > 1 else { fputs("pins import needs a file\n", stderr); return 64 }
+                do { let n = try PinSync.importFile(URL(fileURLWithPath: pos[1])); print(json ? Dump.json(["merged": n]) : "merged \(n) pins"); return 0 }
+                catch { fputs("\(error.localizedDescription)\n", stderr); return 2 }
+            case "sync":
+                if pos.count > 1 {
+                    if pos[1] == "off" { Prefs.syncFolder = nil; print(json ? Dump.json(["sync": false]) : "pin sync off"); return 0 }
+                    let folder = URL(fileURLWithPath: pos[1]).standardizedFileURL.path
+                    var isDir: ObjCBool = false
+                    guard FileManager.default.fileExists(atPath: folder, isDirectory: &isDir), isDir.boolValue else { fputs("not a folder: \(folder)\n", stderr); return 2 }
+                    Prefs.syncFolder = folder
+                    PinSync.pushIfConfigured()
+                    print(json ? Dump.json(["sync": folder]) : "pins will sync through \(folder)/\(PinSync.fileName)")
+                    return 0
+                }
+                print(json ? Dump.json(["sync": Prefs.syncFolder as Any]) : (Prefs.syncFolder.map { "pins sync through \($0)" } ?? "pin sync is off"))
+                return 0
+            default:
+                fputs("pins export <file> | import <file> | sync [<folder>|off]\n", stderr); return 64
+            }
 
         case "pause":
             let secs = parseDuration(pos.first)

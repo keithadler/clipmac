@@ -81,7 +81,8 @@ final class Store {
             keyword TEXT,
             redaction_flags INTEGER NOT NULL DEFAULT 0,
             size INTEGER NOT NULL DEFAULT 0,
-            content_hash TEXT NOT NULL
+            content_hash TEXT NOT NULL,
+            source_title TEXT
         );
         CREATE INDEX IF NOT EXISTS items_created ON items(created_at DESC);
         CREATE INDEX IF NOT EXISTS items_hash ON items(content_hash);
@@ -114,6 +115,10 @@ final class Store {
             prompt TEXT NOT NULL
         );
         """)
+        // Columns added after 0.1.0; ALTER is a no-op error when they already exist.
+        var err: UnsafeMutablePointer<CChar>?
+        sqlite3_exec(db, "ALTER TABLE items ADD COLUMN source_title TEXT", nil, nil, &err)
+        if let err { sqlite3_free(err) }
     }
 
     // MARK: - Low-level helpers
@@ -175,7 +180,7 @@ final class Store {
         return String(cString: c)
     }
 
-    private static let itemColumns = "id, kind, preview, plain, blob_hash, blob_type, source_bundle_id, source_name, created_at, last_used_at, use_count, pinned, keyword, redaction_flags, size, content_hash"
+    private static let itemColumns = "id, kind, preview, plain, blob_hash, blob_type, source_bundle_id, source_name, created_at, last_used_at, use_count, pinned, keyword, redaction_flags, size, content_hash, source_title"
     private static let qualifiedColumns = itemColumns.split(separator: ", ").map { "items." + $0 }.joined(separator: ", ")
 
     private static func item(_ s: OpaquePointer) -> Item {
@@ -187,6 +192,7 @@ final class Store {
              blobType: col(s, 5),
              sourceBundleID: col(s, 6),
              sourceName: col(s, 7),
+             sourceTitle: col(s, 16),
              createdAt: Date(timeIntervalSince1970: sqlite3_column_double(s, 8)),
              lastUsedAt: Date(timeIntervalSince1970: sqlite3_column_double(s, 9)),
              useCount: Int(sqlite3_column_int64(s, 10)),
@@ -237,20 +243,22 @@ final class Store {
     @discardableResult
     func insert(_ c: Capture) -> Item {
         let blobHash = c.blobData.map { writeBlob($0) }
-        let hashInput = Data((c.kind.rawValue + "\u{0}" + c.plain + "\u{0}" + (blobHash ?? "")).utf8)
+        // Text kinds dedupe on whitespace-normalised text, so "foo" and " foo\n" are one item copied twice.
+        let identity = (c.kind == .image || c.kind == .file) ? c.plain : Item.normalized(c.plain)
+        let hashInput = Data((c.kind.rawValue + "\u{0}" + identity + "\u{0}" + (blobHash ?? "")).utf8)
         let contentHash = Store.sha256(hashInput)
         let now = Date().timeIntervalSince1970
         if let existing = query("SELECT \(Store.itemColumns) FROM items WHERE content_hash = ? LIMIT 1", [.text(contentHash)], Store.item).first {
-            run("UPDATE items SET created_at = ?, last_used_at = ?, use_count = use_count + 1, source_bundle_id = COALESCE(?, source_bundle_id), source_name = COALESCE(?, source_name) WHERE id = ?",
-                [.real(now), .real(now), .text(c.sourceBundleID), .text(c.sourceName), .int(existing.id)])
+            run("UPDATE items SET created_at = ?, last_used_at = ?, use_count = use_count + 1, source_bundle_id = COALESCE(?, source_bundle_id), source_name = COALESCE(?, source_name), source_title = COALESCE(?, source_title) WHERE id = ?",
+                [.real(now), .real(now), .text(c.sourceBundleID), .text(c.sourceName), .text(c.sourceTitle), .int(existing.id)])
             return get(existing.id) ?? existing
         }
         let flags = Redactor.flags(in: c.plain)
         run("""
-        INSERT INTO items(kind, preview, plain, blob_hash, blob_type, source_bundle_id, source_name, created_at, last_used_at, use_count, pinned, keyword, redaction_flags, size, content_hash)
-        VALUES(?,?,?,?,?,?,?,?,?,0,0,NULL,?,?,?)
+        INSERT INTO items(kind, preview, plain, blob_hash, blob_type, source_bundle_id, source_name, created_at, last_used_at, use_count, pinned, keyword, redaction_flags, size, content_hash, source_title)
+        VALUES(?,?,?,?,?,?,?,?,?,0,0,NULL,?,?,?,?)
         """, [.text(c.kind.rawValue), .text(Item.makePreview(c.plain)), .text(c.plain), .text(blobHash), .text(c.blobType),
-              .text(c.sourceBundleID), .text(c.sourceName), .real(now), .real(now), .int(Int64(flags.rawValue)), .int(Int64(c.size)), .text(contentHash)])
+              .text(c.sourceBundleID), .text(c.sourceName), .real(now), .real(now), .int(Int64(flags.rawValue)), .int(Int64(c.size)), .text(contentHash), .text(c.sourceTitle)])
         let id = queue.sync { sqlite3_last_insert_rowid(db) }
         return get(id)!
     }
@@ -331,6 +339,11 @@ final class Store {
         } else {
             run("UPDATE items SET pinned = 0, keyword = NULL WHERE id = ?", [.int(id)])
         }
+    }
+
+    /// Replaces an item's searchable text (OCR result for images). Keeps the row's identity.
+    func setPlain(_ id: Int64, _ plain: String, preview: String? = nil) {
+        run("UPDATE items SET plain = ?, preview = ? WHERE id = ?", [.text(plain), .text(preview ?? Item.makePreview(plain)), .int(id)])
     }
 
     func setKeyword(_ id: Int64, _ keyword: String?) {
@@ -484,6 +497,14 @@ enum Prefs {
     static var cloudModel: String {
         if let m = defaults.string(forKey: "cloudModel"), !m.isEmpty { return m }
         return cloudProvider == "openai" ? "gpt-5" : "claude-opus-5"
+    }
+
+    static var recordWindowTitles: Bool { defaults.object(forKey: "recordWindowTitles") as? Bool ?? true }
+    static var skipToasts: Bool { defaults.object(forKey: "skipToasts") as? Bool ?? true }
+    static var ocrImages: Bool { defaults.object(forKey: "ocrImages") as? Bool ?? true }
+    static var syncFolder: String? {
+        get { defaults.string(forKey: "syncFolder") }
+        set { defaults.set(newValue, forKey: "syncFolder") }
     }
 
     // Updates (opt-in daily check)

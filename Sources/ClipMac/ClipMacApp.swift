@@ -56,6 +56,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         if WelcomeController.shouldShow { WelcomeController.shared.show() }
         Updates.scheduleBackgroundChecks()
+        PinSync.start()
     }
 
     /// clipmac://open, clipmac://search?q=…, clipmac://paste/<id or position>[?plain=1], clipmac://copy/<id>,

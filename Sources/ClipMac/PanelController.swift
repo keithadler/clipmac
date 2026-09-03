@@ -99,6 +99,7 @@ final class PanelController {
         case 36, 76:                                                  // return / enter
             guard let it = model.selectedItem else { return true }
             if e.modifierFlags.contains(.shift) { model.queue(it) }         // ⇧↩ adds to the paste stack
+            else if e.modifierFlags.contains(.option) { hide(); Paster.paste(it, transform: .clean) }   // ⌥↩ trimmed, no tracking parameters
             else { hide(); model.paste(it, plain: cmd) }
             return true
         case 51 where cmd: model.deleteSelected(); return true        // ⌘⌫

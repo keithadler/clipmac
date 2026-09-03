@@ -114,3 +114,15 @@ extension Paster {
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(30)) { sendCommandV() }
     }
 }
+
+extension Paster {
+    /// Pastes the item's text after a transform. Always plain text, since the transform changed it.
+    @MainActor
+    @discardableResult
+    static func paste(_ item: Item, transform: Transform) -> Bool {
+        var copy = item
+        copy.plain = transform.apply(item.plain, title: item.sourceTitle)
+        copy.blobHash = nil
+        return paste(copy, plain: true)
+    }
+}

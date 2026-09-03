@@ -12,6 +12,7 @@ let package = Package(
                 .linkedLibrary("sqlite3"),
                 .linkedFramework("Carbon"),
                 .linkedFramework("NaturalLanguage"),
+                .linkedFramework("Vision"),
             ]
         ),
         .testTarget(

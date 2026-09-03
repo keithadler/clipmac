@@ -10,7 +10,7 @@ enum MonitorSuite {
         let pb = CaptureSuite.pasteboard()
         let m = Monitor(pasteboard: pb)
         m.secureInputProbe = { false }
-        m.frontmostProbe = { (nil, nil) }
+        m.frontmostProbe = { (nil, nil, nil) }
         return (m, pb)
     }
 
@@ -58,16 +58,17 @@ enum MonitorSuite {
             t.equal(m.lastSkip, Monitor.Refusal.secureInput.description, "reason: secure input")
             m.secureInputProbe = { false }
 
-            m.frontmostProbe = { ("com.1password.1password", "1Password") }
+            m.frontmostProbe = { ("com.1password.1password", "1Password", nil) }
             copy(pb, "from an excluded app")
             m.poll()
             t.equal(Store.shared.count(), 0, "excluded app not stored")
             t.equal(m.lastSkip, Monitor.Refusal.excludedApp("").description, "reason: excluded app")
-            m.frontmostProbe = { ("com.apple.Safari", "Safari") }
+            m.frontmostProbe = { ("com.apple.Safari", "Safari", "GitHub issue #42") }
             copy(pb, "from an ordinary app")
             m.poll()
             t.equal(Store.shared.count(), 1, "ordinary app stored")
             t.equal(m.lastCaptured?.sourceName, "Safari", "source app recorded")
+            t.equal(m.lastCaptured?.sourceTitle, "GitHub issue #42", "window title recorded")
             Store.shared.wipe()
 
             Prefs.defaults.set(1, forKey: "sizeCapMB")

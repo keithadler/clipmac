@@ -91,7 +91,7 @@ struct PanelView: View {
                     .lineLimit(1).truncationMode(.tail)
                 HStack(spacing: 4) {
                     if let k = it.keyword { Text(k).font(.caption2).padding(.horizontal, 4).background(Color.accentColor.opacity(0.25)).clipShape(Capsule()) }
-                    Text("\(it.sourceName ?? "") · \(Dump.relative(it.createdAt))").font(.caption).lineLimit(1)
+                    Text(subtitle(it)).font(.caption).lineLimit(1)
                 }.foregroundStyle(selected ? Color.white.opacity(0.85) : Color.secondary)
             }
             Spacer(minLength: 4)
@@ -116,10 +116,26 @@ struct PanelView: View {
         .accessibilityHint(Text("Press Return to paste"))
     }
 
+    /// "Safari · GitHub issue #42 · 2m ago · ×3"
+    private func subtitle(_ it: Item) -> String {
+        var parts: [String] = []
+        if let n = it.sourceName { parts.append(n) }
+        if let t = it.sourceTitle, t != it.sourceName { parts.append(String(t.prefix(40))) }
+        parts.append(Dump.relative(it.createdAt))
+        if it.useCount > 0 { parts.append("×\(it.useCount + 1)") }
+        return parts.joined(separator: " · ")
+    }
+
     @ViewBuilder
     private func contextMenu(_ it: Item) -> some View {
         Button("Paste") { PanelController.shared.hide(); model.paste(it, plain: false) }
         Button("Paste as Plain Text") { PanelController.shared.hide(); model.paste(it, plain: true) }
+        let transforms = Transform.available(for: it)
+        if !transforms.isEmpty {
+            Menu("Paste As") {
+                ForEach(transforms) { t in Button(t.label) { PanelController.shared.hide(); Paster.paste(it, transform: t) } }
+            }
+        }
         Button("Copy") { model.copy(it); PanelController.shared.hide() }
         Button("Add to Paste Stack") { model.queue(it) }
         Divider()
@@ -135,13 +151,17 @@ struct PanelView: View {
 
     private var footer: some View {
         HStack(spacing: 14) {
-            hint("↩", "Paste"); hint("⌘↩", "Plain"); hint("⇧↩", "Queue"); hint("⌘C", "Copy"); hint("⌘P", "Pin"); hint("⌘⌫", "Delete"); hint("esc", "Close")
+            hint("↩", "Paste"); hint("⌘↩", "Plain"); hint("⌥↩", "Clean"); hint("⇧↩", "Queue"); hint("⌘C", "Copy"); hint("⌘P", "Pin"); hint("⌘⌫", "Delete"); hint("esc", "Close")
             Button { Help.open(anchor: "keys") } label: { Image(systemName: "questionmark.circle") }.buttonStyle(.plain).foregroundStyle(.secondary).help("All shortcuts")
             Spacer()
             if !stack.isEmpty {
                 Text(String(format: String(localized: "%lld queued · %@ pastes next"), stack.count, Hotkey.describe(.pasteNext)))
                     .font(.caption).foregroundStyle(Color.accentColor)
-                Button { stack.clear() } label: { Image(systemName: "xmark.circle") }.buttonStyle(.plain).help("Clear the paste stack")
+                Menu {
+                    Button("Paste All Queued") { PanelController.shared.hide(); stack.pasteAll(asList: false) }
+                    Button("Paste All Queued as List") { PanelController.shared.hide(); stack.pasteAll(asList: true) }
+                    Button("Clear Paste Stack") { stack.clear() }
+                } label: { Image(systemName: "square.stack.3d.up") }.menuStyle(.borderlessButton).fixedSize().help("Paste stack")
             }
             if !Capabilities.accessibilityTrusted || !Prefs.autoPaste {
                 Text("Copy only: press ⌘V after choosing").font(.caption).foregroundStyle(.secondary)
@@ -194,9 +214,9 @@ struct PreviewPane: View {
                 Spacer()
                 Text(ByteCountFormatter.string(fromByteCount: Int64(item.size), countStyle: .file)).font(.caption).foregroundStyle(.secondary)
             }
-            Text("\(item.sourceName ?? String(localized: "Unknown app")) · \(item.createdAt.formatted(date: .abbreviated, time: .shortened))" +
-                 (item.useCount > 0 ? " · " + String(format: String(localized: "used %lld times"), item.useCount) : ""))
-                .font(.caption).foregroundStyle(.secondary)
+            Text("\(item.sourceName ?? String(localized: "Unknown app"))\(item.sourceTitle.map { " · " + $0 } ?? "") · \(item.createdAt.formatted(date: .abbreviated, time: .shortened))" +
+                 (item.useCount > 0 ? " · " + String(format: String(localized: "copied %lld times"), item.useCount + 1) : ""))
+                .font(.caption).foregroundStyle(.secondary).lineLimit(2)
         }
     }
 

@@ -28,6 +28,19 @@ enum Capabilities {
         }
     }
 
+    /// Title of the frontmost app's focused window, when the Accessibility permission allows it.
+    /// nil otherwise; the app never asks for the permission just for this.
+    static func frontWindowTitle(pid: pid_t) -> String? {
+        guard AXIsProcessTrusted() else { return nil }
+        let app = AXUIElementCreateApplication(pid)
+        var window: AnyObject?
+        guard AXUIElementCopyAttributeValue(app, kAXFocusedWindowAttribute as CFString, &window) == .success, let window else { return nil }
+        var title: AnyObject?
+        guard AXUIElementCopyAttributeValue(window as! AXUIElement, kAXTitleAttribute as CFString, &title) == .success else { return nil }
+        let t = (title as? String)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return t.isEmpty ? nil : String(t.prefix(200))
+    }
+
     /// A password field has focus somewhere (Terminal with a sudo prompt, a browser password box, …).
     static var secureInputActive: Bool { IsSecureEventInputEnabled() }
 
