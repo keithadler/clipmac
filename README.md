@@ -4,7 +4,7 @@ A clipboard history for macOS that refuses to capture secrets. Search everything
 pin the things you paste every day, and, if you want, ask questions about it without anything
 leaving your Mac.
 
-Free, MIT licensed, no account, no telemetry. Same family as [Tidy for Mac](https://github.com/keithadler/tidymac).
+Free, MIT licensed, no account, no telemetry. Same family as [Clean for Mac](https://github.com/keithadler/cleanmac).
 
 ## Download
 
@@ -227,5 +227,5 @@ Four more small apps built the same way: each does one thing, says exactly what 
 
 - [Ask for Mac](https://github.com/keithadler/askmac): ask your files a question in your own words and get the answer with the file it came from, all on the Mac.
 - [Permissions for Mac](https://github.com/keithadler/permsmac): every permission on your Mac on one screen, in plain English, with what changed since last week.
-- [Tidy for Mac](https://github.com/keithadler/tidymac): cleanup and speed for the whole family; nothing is deleted, only moved to the Trash with an undoable receipt.
+- [Clean for Mac](https://github.com/keithadler/cleanmac): cleanup and speed for the whole family; nothing is deleted, only moved to the Trash with an undoable receipt.
 - [Stash for Mac](https://github.com/keithadler/stashmac): encrypted backup into storage you already have; the provider only ever sees ciphertext.
