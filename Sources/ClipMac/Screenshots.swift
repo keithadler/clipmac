@@ -124,6 +124,17 @@ enum Screenshots {
 
     @MainActor
     private static func capture(_ window: NSWindow, to url: URL) throws -> URL {
+        // The welcome and Ask windows are reused for the light pass. On macOS 27 a window that was
+        // ordered out while key comes back still marked key but drawn inactive (gray traffic lights
+        // and controls), so give key status to a throwaway window first; the real one then gets a
+        // genuine become-key and draws as the active window.
+        if window.isKeyWindow {
+            let other = CaptureKeyWindow(contentRect: NSRect(x: 0, y: 0, width: 1, height: 1), styleMask: [.borderless], backing: .buffered, defer: false)
+            other.alphaValue = 0
+            other.makeKeyAndOrderFront(nil)
+            settle(0.2)
+            other.orderOut(nil)
+        }
         window.makeKeyAndOrderFront(nil)
         settle(0.3)
         let id = CGWindowID(window.windowNumber)
@@ -168,4 +179,9 @@ enum Screenshots {
         text("Invoice #4471 for the Woodland Ave project is due Friday", app: "com.apple.mail", name: "Mail")
         Assist.shared.indexPending()
     }
+}
+
+/// A borderless window can't become key by default; the capture harness needs one that can.
+private final class CaptureKeyWindow: NSWindow {
+    override var canBecomeKey: Bool { true }
 }

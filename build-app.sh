@@ -14,11 +14,16 @@ cd "$(dirname "$0")"
 # go (that needs Xcode's xcbuild), so each slice is built separately and joined with lipo.
 # Set ARCHS to one triple for a quick local build, e.g. ARCHS=arm64-apple-macosx ./build-app.sh
 ARCHS="${ARCHS:-arm64-apple-macosx x86_64-apple-macosx}"
+# Swift 6.4's SwiftPM links without SDKROOT, so clang stamps the binary with the deployment target
+# (14.0) as its SDK version and AppKit then draws the pre-macOS 26 look. Naming the SDK to the link
+# step records the real one (27.0 here, 26.x on CI); older toolchains already did this and ignore it.
+SDK_PATH="$(xcrun --sdk macosx --show-sdk-path)"
+LINK_SDK=(-Xswiftc -Xclang-linker -Xswiftc -isysroot -Xswiftc -Xclang-linker -Xswiftc "$SDK_PATH")
 SLICES=()
 for triple in $ARCHS; do
   echo "Building ${triple}..."
   # Each slice gets its own scratch folder; sharing one confuses SwiftPM's build database.
-  swift build -c release --triple "$triple" --scratch-path ".build/slices/$triple" 2>&1 | grep -vE '^\[|Compiling|Emitting|Linking|Build complete|Planning|Write' || true
+  swift build -c release --triple "$triple" --scratch-path ".build/slices/$triple" "${LINK_SDK[@]}" 2>&1 | grep -vE '^\[|Compiling|Emitting|Linking|Build complete|Planning|Write' || true
   # Ask SwiftPM where it put the binary: Swift 6.4 (Xcode 27) defaults to the swiftbuild engine,
   # which writes to out/Products/Release instead of <triple>/release.
   slice="$(swift build -c release --triple "$triple" --scratch-path ".build/slices/$triple" --show-bin-path)/ClipMac"
@@ -26,6 +31,10 @@ for triple in $ARCHS; do
   # Refuse a stale slice: it must be newer than every source file.
   newest_src=$(find Sources -name '*.swift' -newer "$slice" | head -1)
   [ -z "$newest_src" ] || { echo "build for $triple did not produce a fresh binary (see errors above)"; exit 1; }
+  # The SDK the binary says it was built with decides which AppKit look it gets; it must be the real one.
+  stamped=$(otool -l "$slice" | awk '/LC_BUILD_VERSION/ { f = 1 } f && $1 == "sdk" { print $2; exit }')
+  wanted=$(xcrun --sdk macosx --show-sdk-version)
+  [ "${stamped%%.*}" = "${wanted%%.*}" ] || { echo "build for $triple records SDK $stamped, not $wanted"; exit 1; }
   SLICES+=("$slice")
 done
 mkdir -p build
