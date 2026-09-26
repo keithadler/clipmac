@@ -2,6 +2,7 @@
 //  FileVault on) next to its control, so nothing is a dead switch.
 
 import SwiftUI
+import Combine
 import AppKit
 import ServiceManagement
 

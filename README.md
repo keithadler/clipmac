@@ -8,7 +8,7 @@ Free, MIT licensed, no account, no telemetry. Same family as [Room for Mac](http
 
 ## Download
 
-**[Download Clip for Mac 1.0.1 (DMG, 2.7 MB)](https://github.com/keithadler/clipmac/releases/download/v1.0.2/Clip-for-Mac-1.0.2.dmg)** · macOS 14 or later, Apple silicon and Intel
+**[Download Clip for Mac 1.0.3 (DMG, 2.7 MB)](https://github.com/keithadler/clipmac/releases/download/v1.0.3/Clip-for-Mac-1.0.3.dmg)** · macOS 14 or later, Apple silicon and Intel
 
 1. Open the downloaded file and drag **Clip for Mac** into **Applications**.
 2. Open it from Applications. macOS will say it can't check the app for malicious software: click **Done**, then **System Settings › Privacy & Security › Open Anyway**. That happens once, because this is a free app without Apple's $99-a-year certificate.

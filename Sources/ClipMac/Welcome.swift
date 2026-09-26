@@ -5,6 +5,7 @@
 //  Shown once, and again from the menu bar on request.
 
 import SwiftUI
+import Combine
 import AppKit
 import ServiceManagement
 

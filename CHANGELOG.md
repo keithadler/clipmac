@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.3 - 2026-09-25
+
+Built and tested on macOS 27.
+
+- The Settings and Welcome windows now import Combine for their refresh timers, which clears the two
+  warnings the Swift 6.4 compiler gives. Nothing changes in how they behave.
+
 ## 1.0.2 — 2026-09-03
 
 "More from the Same Maker" in the Help menu and the menu bar, pointing at the family page. Help and README gained the same section.
